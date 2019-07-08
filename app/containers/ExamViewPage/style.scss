@@ -1,0 +1,10 @@
+.exam-view-page {
+  .sec-header-toggle {
+    cursor: pointer;
+
+    &:active {
+      background: #FFF;
+      color: #41ADDD;
+    }
+  }
+}

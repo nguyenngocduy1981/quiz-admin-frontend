@@ -1,0 +1,31 @@
+.home-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  section {
+    width: 120px;
+    height: 100px;
+
+    text-align: center;
+    cursor: pointer;
+    margin: 10px;
+    border: 1px solid #41ADDD;
+    padding: 10px 5px;
+
+    &.centered {
+      text-align: center;
+    }
+  }
+  a {
+    color: #41ADDD;
+    &:hover{
+      color: #41ADDD;
+      text-decoration: underline;
+    }
+  }
+  .current_exam {
+    background: #41ADDD;
+  }
+
+}
