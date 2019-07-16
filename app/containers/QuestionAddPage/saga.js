@@ -4,8 +4,7 @@ import {
 
 import {push} from 'react-router-redux';
 
-// import {request} from 'utils/request';
-// import {post} from 'utils/request-method';
+
 import {
   SAVE_QUESTIONS, GET_SECTION, GO_HOME,
   saveQuestionsSuccess, requestError, getSectionSuccess, CHECK_EXISTED_QUESTION, markExistedQuestion, resetError
@@ -14,7 +13,12 @@ import {QUESTIONS_BULK, SECTIONS, QUESTIONS} from '../../constants/service-model
 import request from '../../utils/request';
 import {post} from '../../utils/request-method';
 import {SECTION_R} from "../../constants/routers";
-import {QUESTION_TEXT_TYPES} from "../../constants/questions";
+import {
+  PASSAGE_TEXT,
+  PASSAGE_OPTION_FROM_GIVEN,
+  QUESTION_TEXT_TYPES,
+  QUESTION_OPTION_TYPES
+} from "../../constants/questions";
 import notify from "../../utils/notify";
 
 const _ = require('lodash');
@@ -28,37 +32,47 @@ export function* goHome(payload) {
   }
 }
 
-function convertTextQuestion(q, section) {
+function convertTextQuestion(q) {
+  return {text: q.text, answer: q.ans};
+}
+
+function convertPassageQuestion(q, section, catId) {
+  // passageId
   const ques = {
-    text: q.text,
-    type: section.questionType,
-    answer: q.ans,
-    sectionId: section.id,
-    categoryIds: ['lop6']
-  };
+      text: q.text,
+      type: section.questionType,
+      passages: q.passages,
+      sectionId: section.id,
+      categoryId: catId
+    }
+  ;
   return ques;
 }
 
-function convertQuestion(q, section) {
+function convertPosQuestion(q, section) {
   const {a, b, c, d} = q.pos;
   const ques = {
     text: q.text,
     answer: q.ans,
     type: section.questionType,
     possibleAnswers: [a, b, c, d],
-    sectionId: section.id,
-    categoryIds: ['lop6']
   };
   return ques;
 }
 
 function convert2Save(payload) {
-  const {section, questions} = payload;
+  const {section, childCatId} = payload;
+  let {questions} = payload;
   const type = section.questionType;
+
   if (QUESTION_TEXT_TYPES.includes(type)) {
-    return questions.map(q => convertTextQuestion(q, section));
+    questions = questions.map(convertTextQuestion);
+  } else if (PASSAGE_OPTION_FROM_GIVEN === type) {
+    questions = questions.map(q => convertPassageQuestion(q, section, childCatId));
+  } else if (QUESTION_OPTION_TYPES.includes(type)) {
+    questions = questions.map(q => convertPosQuestion(q, section));
   }
-  return questions.map(q => convertQuestion(q, section));
+  return {sectionId: section.id, categoryId: childCatId, passageId: 11, questions};
 }
 
 export function* saveQuestions(req) {
@@ -68,10 +82,9 @@ export function* saveQuestions(req) {
       notify(res.error.message);
       yield put(resetError());
     } else {
-      notify('Thành công! Thêm câu hỏi khác', 1000);
       yield put(saveQuestionsSuccess());
-      const {catId} = req.payload;
-      yield put(push(`${SECTION_R}/${catId}`));
+      const {catId, childCatId} = req.payload;
+      yield put(push(`${SECTION_R}/${catId}/${childCatId}`));
     }
   } catch (err) {
     yield put(requestError());

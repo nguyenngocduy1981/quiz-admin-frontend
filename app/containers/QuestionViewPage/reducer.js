@@ -14,16 +14,17 @@ export const initialState = {
   error: false,
   questions: false,
   section: false,
+  passage: false,
   exam: {}
 };
 
-function extractSection(questions) {
-  if (questions.length > 0) {
-    const {sectionId, sectionName, type, options} = questions[0];
-    return {id: sectionId, text: sectionName, questionType: type, options};
-  }
-  return false;
-}
+// function extractSection(questions) {
+//   if (questions.length > 0) {
+//     const {sectionId, sectionName, type, options} = questions[0];
+//     return {id: sectionId, text: sectionName, questionType: type, options};
+//   }
+//   return false;
+// }
 
 function viewQuestionInSectionReducer(state = initialState, action) {
   switch (action.type) {
@@ -46,12 +47,12 @@ function viewQuestionInSectionReducer(state = initialState, action) {
       return newState;
     }
     case GET_QUESTIONS_SUCCESS: {
-      const questions = action.payload;
-      const section = extractSection(questions);
+      const {section, passage, questions} = action.payload;
       const newState = {
         ...state,
         loading: false,
         section,
+        passage,
         questions
       };
       return newState;

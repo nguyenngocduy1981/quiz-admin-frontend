@@ -6,12 +6,17 @@ import injectSaga from 'utils/injectSaga';
 import LoadingIndicator from 'components/LoadingIndicator';
 import {
   makeSelectLoading,
-  makeSelectError, makeSelectSections, makeSelectCategories, makeSelectSelectedCat, makeSelectExam,
+  makeSelectError,
+  makeSelectSections,
+  makeSelectCategories,
+  makeSelectSelectedCat,
+  makeSelectExam,
+  makeSelectChildCategories, makeSelectSelectedChildCat,
 } from './selectors';
 import {
   cancelExam,
   createExam,
-  deleteSection, goHome, loadCategories, loadExamFromLocalStorage, loadSections, resetSections,
+  deleteSection, goHome, loadCategories, loadChildCategories, loadExamFromLocalStorage, loadSections, resetSections,
 } from './actions';
 import saga from './saga';
 
@@ -25,6 +30,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import {countQuesInExam, getExam} from "../../utils/local-storage";
 import {defaultCatId} from "../SectionAddPage/constants";
 import NoData from "../../components/NoData";
+import SubCategoriesView from "../../components/SubCategoriesView";
 
 const _ = require('lodash');
 const $ = require('jquery');
@@ -37,7 +43,6 @@ class SectionViewPage extends React.Component {
     super(props);
     this.state = {
       actionShown: false,
-      catId: defaultCatId,
       sectionId4Delete: -1
     };
   }
@@ -47,15 +52,20 @@ class SectionViewPage extends React.Component {
 
     $(`#${ACTIONS_ID}`).hide();
 
-    const {catId} = this.props.match.params;
-    if (catId) {
-      this.setState({catId});
-      this.props.loadSections(catId);
-    } else {
-      this.props.resetSections();
-    }
+    const {catId, childCatId} = this.props.match.params;
+    // if (catId) {
+    //   this.loadSections(catId);
+    // } else {
 
-    this.props.loadCategories();
+    // }
+
+    if (catId && childCatId) {
+      const payload = {parentId: catId, childId: childCatId};
+      this.props.loadCategories(payload);
+    } else {
+      // this.props.resetSections();
+      this.props.loadCategories();
+    }
     this.props.loadExamFromLocalStorage();
   }
 
@@ -80,12 +90,12 @@ class SectionViewPage extends React.Component {
   renderSection = (sec, idx) => {
     const quesListInExam = this.props.exam[sec.id];
     const lenInExam = quesListInExam ? quesListInExam.length : 0;
-    const {catId} = this.props.match.params;
+    const {catId, childCatId} = this.props.match.params;
     return (
       <tr
         key={`sec_${idx}`}
         onClick={this.selectSection(sec)}
-        className={`${catId === sec.id ? 'active' : ''}`}
+        className={`${childCatId === sec.id ? 'active' : ''}`}
       >
         <td>{sec.id}</td>
         <td>
@@ -94,23 +104,17 @@ class SectionViewPage extends React.Component {
         </td>
         <td>{sec.questionType}</td>
         <td className={'action'}>
-        <span className={'q-remove-icon'} onClick={(e) => this.confirmDelete(sec.id)} title={LINKS.xoa_dm}>
+        <span className={'q-remove-icon'} onClick={this.confirmDelete(sec.id)} title={LINKS.xoa_dm}>
           <i className="fa fa-times hover" aria-hidden="true"></i>
         </span>
-          {
-            catId === defaultCatId &&
-            <Link className="router-link m-r-5" to={`${QUESTIONS_VIEW}/${sec.id}`} title={LINKS.chi_tiet_q}>
-              <i className="fa fa-bars" aria-hidden="true"></i>
-            </Link>
-          }
-          {
-            catId !== defaultCatId &&
-            <Link className="router-link m-r-5" to={`${QUESTIONS_VIEW}/${sec.id}/${catId}`}
-                  title={LINKS.chi_tiet_q}>
-              <i className="fa fa-bars" aria-hidden="true"></i>
-            </Link>
-          }
-          <Link className="router-link m-l-5" to={`${QUESTIONS_NEW}/${sec.id}/${catId}`} title={LINKS.them_q}>
+          {/*<Link className="router-link m-r-5" to={`${QUESTIONS_VIEW}/${sec.id}`} title={LINKS.chi_tiet_q}>*/}
+          {/*<i className="fa fa-bars" aria-hidden="true"></i>*/}
+          {/*</Link>*/}
+          <Link className="router-link m-r-5" to={`${QUESTIONS_VIEW}/${sec.id}/${catId}/${childCatId}`}
+                title={LINKS.chi_tiet_q}>
+            <i className="fa fa-bars" aria-hidden="true"></i>
+          </Link>
+          <Link className="router-link m-l-5" to={`${QUESTIONS_NEW}/${sec.id}/${catId}/${childCatId}`} title={LINKS.them_q}>
             <i className="fa fa-question-circle" aria-hidden="true"></i>
           </Link>
           <span className={'m-l-10 m-r-10 badge badge-secondary'}
@@ -120,11 +124,13 @@ class SectionViewPage extends React.Component {
     )
   }
 
-  changeCategory = (id) => (evt) => {
-    this.setState({id}, () => {
-      this.props.loadSections(id);
-    });
-    this.saveStateAndHideAction();
+  isActive = (id, selectedCat) => {
+    return `${id}` === `${selectedCat}`;
+  }
+
+  viewChildren = (id) => (evt) => {
+    const payload = {parentId: id, isNavigate: true}
+    this.props.loadChildCategories(payload);
   }
 
   renderCategories = () => {
@@ -133,9 +139,9 @@ class SectionViewPage extends React.Component {
 
     return categories.map((c, idx) => (
       <span
-        className={`btn ${c.id === selectedCat ? 'active-link' : ''}`}
+        className={`btn ${this.isActive(c.id, selectedCat) ? 'active-link' : ''}`}
         key={idx}
-        onClick={this.changeCategory(c.id)}
+        onClick={this.viewChildren(c.id)}
       >{c.catName}
       </span>
     ));
@@ -175,6 +181,14 @@ class SectionViewPage extends React.Component {
     return `${countQuesInExam()} câu hỏi trong bài thi`;
   }
 
+  loadSections = (parentId, childId) => {
+    const payload = {parentId, childId};
+    this.props.loadSections(payload);
+  }
+  onChildCategoryChange = id => {
+    const {catId} = this.props.match.params;
+    this.loadSections(catId, id);
+  }
   renderSections = () => {
     const {
       loading, error, sections,
@@ -209,13 +223,51 @@ class SectionViewPage extends React.Component {
   renderFullActionList = () => {
 
   }
-  renderSummary = () => {
+  renderActions = () => {
     const {exam} = this.props;
     const keys = Object.keys(exam);
     const len = keys.length === 0 ? 0 : keys.map(k => exam[k].length).reduce((a, b) => a + b);
 
-    const catId = this.state.catId;
-
+    // const catId = this.state.catId;
+    let {catId, childCatId} = this.props.match.params;
+    catId = catId === undefined ? defaultCatId : catId;
+    return (
+      <div id={ACTIONS_ID}>
+        {len > 0 && this.renderFullActionList()}
+        <ul className="list-group">
+          {len > 0 &&
+          <li className="list-group-item">
+            {
+              catId === defaultCatId &&
+              <Link className="router-link" to={EXAM_PREVIEW}>{LINKS.preview_exam}</Link>
+            }
+            {
+              catId !== defaultCatId &&
+              <Link className="router-link" to={`${EXAM_PREVIEW}/${catId}`}>{LINKS.preview_exam}</Link>
+            }
+          </li>
+          }
+          {len > 0 &&
+          <li className="list-group-item">
+            <span onClick={this.cancelExam}>{LINKS.cancel_exam}</span>
+          </li>
+          }
+          {len > 0 &&
+          <li className="list-group-item">
+            <span onClick={this.createExam}>{LINKS.create_exam}</span>
+            <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len}</span>
+          </li>
+          }
+          {childCatId &&
+          <li className="list-group-item">
+            <Link className="router-link" to={`${SECTION_NEW_R}/${catId}/${childCatId}`}>{LINKS.them_sec}</Link>
+          </li>
+          }
+        </ul>
+      </div>
+    )
+  }
+  renderSummary = () => {
     return (
       <div className={'summary'}>
         <div className={'col-8 col-sm-6 col-md-6 col-lg-7 summary'}>
@@ -230,50 +282,13 @@ class SectionViewPage extends React.Component {
           <span className="main btn" onClick={this.toggleActions}>
             <i className="fa fa-align-justify"></i>
           </span>
-          <div id={ACTIONS_ID}>
-            {len > 0 && this.renderFullActionList()}
-            <ul className="list-group">
-              {len > 0 &&
-              <li className="list-group-item">
-                {
-                  catId === defaultCatId &&
-                  <Link className="router-link" to={EXAM_PREVIEW}>{LINKS.preview_exam}</Link>
-                }
-                {
-                  catId !== defaultCatId &&
-                  <Link className="router-link" to={`${EXAM_PREVIEW}/${catId}`}>{LINKS.preview_exam}</Link>
-                }
-              </li>
-              }
-              {len > 0 &&
-              <li className="list-group-item">
-                <span onClick={this.cancelExam}>{LINKS.cancel_exam}</span>
-              </li>
-              }
-              {len > 0 &&
-              <li className="list-group-item">
-                <span onClick={this.createExam}>{LINKS.create_exam}</span>
-                <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len}</span>
-              </li>
-              }
-              <li className="list-group-item">
-                {
-                  catId === defaultCatId &&
-                  <Link className="router-link" to={SECTION_NEW_R}>{LINKS.them_dm}</Link>
-                }
-                {
-                  catId !== defaultCatId &&
-                  <Link className="router-link" to={`${SECTION_NEW_R}/${catId}`}>{LINKS.them_dm}</Link>
-                }
-              </li>
-            </ul>
-          </div>
+          {this.renderActions()}
         </div>
       </div>
     )
   }
 
-  confirmDelete = (sectionId4Delete) => {
+  confirmDelete = sectionId4Delete => evt => {
     this.setState({sectionId4Delete, actionShown: true}, () => {
       $(`#${CONFIRM_MODAL_ID}`).fadeIn(VELOCITY);
     });
@@ -287,6 +302,7 @@ class SectionViewPage extends React.Component {
   }
 
   render() {
+    const {childCategories, selectedChildCat} = this.props;
     return (
       <article>
         <Helmet>
@@ -294,6 +310,9 @@ class SectionViewPage extends React.Component {
         </Helmet>
         <div className="section-view-page">
           {this.renderSummary()}
+          <SubCategoriesView categories={childCategories}
+                             current={selectedChildCat}
+                             onChange={this.onChildCategoryChange}/>
           {this.renderSections()}
           <ConfirmModal id={CONFIRM_MODAL_ID} onConfirm={this.onModalConfirm}/>
         </div>
@@ -304,7 +323,8 @@ class SectionViewPage extends React.Component {
 
 const mapDispatchToProps = (dispatch) => ({
   loadExamFromLocalStorage: () => dispatch(loadExamFromLocalStorage()),
-  loadCategories: () => dispatch(loadCategories()),
+  loadCategories: (payload) => dispatch(loadCategories(payload)),
+  loadChildCategories: (payload) => dispatch(loadChildCategories(payload)),
   loadSections: (payload) => dispatch(loadSections(payload)),
   resetSections: (payload) => dispatch(resetSections(payload)),
   deleteSection: (payload) => dispatch(deleteSection(payload)),
@@ -315,8 +335,10 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = createStructuredSelector({
   categories: makeSelectCategories(),
+  childCategories: makeSelectChildCategories(),
   sections: makeSelectSections(),
   selectedCat: makeSelectSelectedCat(),
+  selectedChildCat: makeSelectSelectedChildCat(),
   exam: makeSelectExam(),
   loading: makeSelectLoading(),
   error: makeSelectError(),

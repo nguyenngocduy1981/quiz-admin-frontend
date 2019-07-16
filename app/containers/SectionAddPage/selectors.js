@@ -21,6 +21,10 @@ const makeSelectCategories = () => createSelector(
   selectGlobal,
   (globalState) => globalState.categories
 );
+const makeSelectCategory = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.category
+);
 const makeSelectSelectedCategory = () => createSelector(
   selectGlobal,
   (globalState) => globalState.selectedCat
@@ -33,5 +37,6 @@ export {
   makeSelectError,
   makeSelectSections,
   makeSelectCategories,
+  makeSelectCategory,
   makeSelectSelectedCategory
 };

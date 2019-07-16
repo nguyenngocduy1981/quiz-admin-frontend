@@ -1,0 +1,21 @@
+input {
+  border: 1px solid transparent;
+  padding-left: 5px;
+  &:focus {
+    outline: none;
+  }
+}
+
+.passage {
+  //border: 1px solid grey;
+  span {
+    padding-left: 5px;
+    &:hover{
+      color: red;
+    }
+  }
+
+  .ques-no {
+    max-width: 80px;
+  }
+}

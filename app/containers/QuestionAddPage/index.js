@@ -27,8 +27,9 @@ import {
   ACTION,
   LINKS,
   OPTION_FROM_GIVEN,
+  PASSAGE_TYPES,
   QUESTION_TEXT_TYPES,
-  QUESTION_OPTION_TYPES
+  QUESTION_OPTION_TYPES, PASSAGE_TEXT, PASSAGE_OPTION_FROM_GIVEN, PASSAGE_OPTION
 } from "../../constants/questions";
 import Error from "../../components/Error";
 import TextAnswerAdd from "../../components/TextAnswerAdd";
@@ -41,8 +42,9 @@ import {
 } from "./utils";
 import {QUESTIONS_VIEW} from "../../constants/routers";
 import {Link} from "react-router-dom";
-import SectionTypeOptionFromGivenView from "../../components/SectionTypeOptionFromGivenView";
+import SectionView from "../../components/SectionView";
 import NoData from "../../components/NoData";
+import PassageQuestionAdd from "../../components/PassageQuestionAdd";
 
 const _ = require('lodash');
 
@@ -74,7 +76,8 @@ class QuestionAddPage extends React.Component {
   }
 
   onQuestionDataOutput = section => evt => {
-    const {questions} = this.props;
+    console.log('onQuestionDataOutput: ', evt);
+    // const {questions} = this.props;
     const {action, data} = evt;
     switch (action) {
       case ACTION.NEW:
@@ -97,9 +100,20 @@ class QuestionAddPage extends React.Component {
   }
 
   renderQuestion = (section, q, idx) => {
-    if (QUESTION_TEXT_TYPES.includes(q.questionType)) {
+    const type = section.questionType;
+    // PASSAGE_TEXT, PASSAGE_OPTION_FROM_GIVEN cung thuoc loai TEXT
+    if (QUESTION_TEXT_TYPES.includes(type)) {
       return (<TextAnswerAdd key={idx} idx={idx + 1} ques={q} onDataOutput={this.onQuestionDataOutput(section)}/>);
     }
+    // else if (PASSAGE_TYPES.includes(type)) {
+    //   return (
+    //     <PassageQuestionAdd key={idx} idx={idx + 1}
+    //                         ques={q}
+    //                         onDataOutput={this.onQuestionDataOutput(section)}/>
+    //   );
+    // }
+
+    // PASSAGE_OPTION thuoc Possible co 4 dap an
     return (
       <PossibleAnswerAdd key={idx} idx={idx + 1} ques={q}
                          onDataOutput={this.onQuestionDataOutput(section)}/>
@@ -111,8 +125,8 @@ class QuestionAddPage extends React.Component {
     return questions.map((q, idx) => this.renderQuestion(section, q, idx));
   }
 
-  newQuestion = questionType => evt => {
-    this.props.newQuestion(questionType);
+  newQuestion = evt => {
+    this.props.newQuestion();
   }
 
   goHome = () => {
@@ -133,15 +147,16 @@ class QuestionAddPage extends React.Component {
       isQuestionsExisted(questions) ||
       (QUESTION_OPTION_TYPES.includes(type) && posAnsHasError(questions)) ||
       (requiredPickFromGiven && !checkQuesOPTION_FROM_GIVENWithAnswerMustInGiven(section, questions))) {
-      this.props.newQuestion(type);
+      this.props.newQuestion();
       return;
     }
 
-    const {catId} = this.props.match.params;
-    this.props.saveQuestions({section, questions, catId});
+    const {catId, childCatId} = this.props.match.params;
+    this.props.saveQuestions({section, questions, catId, childCatId});
   }
 
   renderSummary = () => {
+    const {catId, childCatId} = this.props.match.params;
     const {section, questions} = this.props;
     const len = questions.length;
     return (
@@ -149,7 +164,7 @@ class QuestionAddPage extends React.Component {
         <div className={'col-md-10 summary'}>
           <h5 className={'p-t-5'}>
             <span className={'btn m-r-10'} onClick={this.goHome}>&lt;&lt;</span>
-            <Link className="m-l-10 router-link" to={`${QUESTIONS_VIEW}/${section.id}`}
+            <Link className="m-l-10 router-link" to={`${QUESTIONS_VIEW}/${section.id}/${catId}/${childCatId}`}
                   title={section.questionType}
                   dangerouslySetInnerHTML={{__html: section.text}}/>
             <span className={'m-l-10 m-r-10 badge badge-secondary'} title={section.questionType}>{len}</span>
@@ -158,13 +173,33 @@ class QuestionAddPage extends React.Component {
         <div className={'col-md-2 summary'}>
           <h5 className={'p-t-5'}>
             <span className={'btn'}
-                  onClick={this.newQuestion(section.questionType)}>{LINKS.them_moi}</span>
+                  onClick={this.newQuestion}>{LINKS.them_moi}</span>
             {
               len > 0 ?
                 (<span className={'btn'}
                        onClick={this.saveQuestions}>{LINKS.luu}</span>) : ''
             }
           </h5>
+        </div>
+      </div>
+    );
+  }
+
+  renderPassageTextHeader() {
+    const {passage} = this.props.section;
+    return (
+      <div className={'row q-container'}>
+        <div className={'col-md-12'} dangerouslySetInnerHTML={{__html: passage.text}}/>
+      </div>
+    );
+  }
+
+  renderPASSAGE_OPTION_FROM_GIVEN(passage) {
+    const {options} = passage;
+    return (
+      <div className={'row q-container'}>
+        <div className={'col-md-12 op'}>
+          {options.map((o, idx) => <span key={idx}>{o}</span>)}
         </div>
       </div>
     );
@@ -193,7 +228,8 @@ class QuestionAddPage extends React.Component {
         </div>
       );
     }
-
+    const {passage} = this.props.section;
+    const type = section.questionType;
     return (
       <article>
         <Helmet>
@@ -201,8 +237,11 @@ class QuestionAddPage extends React.Component {
         </Helmet>
         <div className="ques-add-page">
           {this.renderSummary()}
-          <SectionTypeOptionFromGivenView section={section} requiredPickFromGiven={requiredPickFromGiven}
-                                          onRequiredPickFromGivenChange={e => this.props.markAnswerPickedFromGiven(e)}
+          {type === PASSAGE_OPTION_FROM_GIVEN && this.renderPASSAGE_OPTION_FROM_GIVEN(passage)}
+          {PASSAGE_TYPES.includes(type) && this.renderPassageTextHeader()}
+
+          <SectionView section={section} requiredPickFromGiven={requiredPickFromGiven}
+                       onRequiredPickFromGivenChange={e => this.props.markAnswerPickedFromGiven(e)}
           />
           {this.renderQuestions()}
         </div>
@@ -215,7 +254,7 @@ const
   mapDispatchToProps = (dispatch) => ({
     getSection: (payload) => dispatch(getSection(payload)),
     goHome: (payload) => dispatch(goHome(payload)),
-    newQuestion: (payload) => dispatch(newQuestion(payload)),
+    newQuestion: () => dispatch(newQuestion()),
     saveTempQuestion: (payload) => dispatch(saveTempQuestion(payload)),
     saveQuestions: (payload) => dispatch(saveQuestions(payload)),
     checkExistedQuestion: (payload) => dispatch(checkExistedQuestion(payload)),

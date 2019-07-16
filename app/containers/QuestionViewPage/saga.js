@@ -16,10 +16,10 @@ import notify from "../../utils/notify";
 
 const _ = require('lodash');
 
-export function* goHome(payload) {
-  const {catId} = payload;
+export function* goHome(pl) {
+  const {catId, childCatId} = pl.payload;
   if (catId) {
-    yield put(push(`${SECTION_R}/${catId}`));
+    yield put(push(`${SECTION_R}/${catId}/${childCatId}`));
   } else {
     yield put(push(SECTION_R));
   }

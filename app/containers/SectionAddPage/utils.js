@@ -12,8 +12,8 @@ function secHasError(sec) {
   const isGiven = sec.questionType === OPTION_FROM_GIVEN;
   if (!isGiven) return false;
 
-  const len = sec.options.length;
-  const isDuplicate = _.uniq(sec.options.filter(notEmpty)).length < len;
+  const len = sec.sectionOptions.length;
+  const isDuplicate = _.uniq(sec.sectionOptions.filter(notEmpty)).length < len;
 
   return isGiven && (len === 0 || isDuplicate);
 }

@@ -8,7 +8,14 @@ import {
   NEW_QUESTION, MARK_EXISTED_QUESTION, RESET_ERROR, REMOVE_QUESTION, MARK_ANSWER_PICKED_FROM_GIVEN
 } from './actions';
 import getId from '../../utils/datetime';
-import {ERROR_MSG, QUESTION_TEXT_TYPES, QUESTION_OPTION_TYPES} from '../../constants/questions';
+import {
+  ERROR_MSG,
+  QUESTION_TEXT_TYPES,
+  QUESTION_OPTION_TYPES,
+  PASSAGE_TYPES,
+  PASSAGE_TEXT,
+  PASSAGE_OPTION_FROM_GIVEN
+} from '../../constants/questions';
 import {
   isEmptyQuestions,
   isQuestionsExisted,
@@ -36,8 +43,10 @@ function createNew(type) {
   };
   if (QUESTION_TEXT_TYPES.includes(type)) {
     newQues.ans = '';
-  } else {
+  } else if (QUESTION_OPTION_TYPES.includes(type)) {
     newQues.pos = Object.assign({}, pos);
+  } else {
+    console.log('nothing set');
   }
 
   return newQues;
@@ -63,7 +72,7 @@ function addQuestionReducer(state = initialState, action) {
     }
     case NEW_QUESTION: {
       // TODO chú ý, update logic check ở đây thì cũng cần update "save questions" trong index.js
-      const type = action.questionType;
+      const type = state.section.questionType;
       let questions = resetQuestionError(toQuestions(state));
 
       if (isEmptyQuestions(questions, type)) {
@@ -90,7 +99,7 @@ function addQuestionReducer(state = initialState, action) {
         return {...state, questions};
       }
 
-      questions.push(createNew(action.questionType));
+      questions.push(createNew(type));
 
       return {...state, questions};
     }
@@ -115,7 +124,7 @@ function addQuestionReducer(state = initialState, action) {
       const questions = toQuestions(state);
       const ques = action.payload;
       const oldQues = _.find(questions, ['id', ques.id]);
-      const type = ques.questionType;
+      const type = state.section.questionType;
 
       if (oldQues) {
         if (QUESTION_TEXT_TYPES.includes(type)) {
@@ -161,11 +170,12 @@ function addQuestionReducer(state = initialState, action) {
       return newState;
     }
     case GET_SECTION_SUCCESS: {
-      const section = action.payload
+      const {id, text, questionType, category, options, passage} = action.payload
+      const section = {id, text, questionType, category, options, passage};
       const newState = {
         ...state,
         loading: false,
-        questions: [createNew(section.questionType)],
+        questions: [createNew(questionType)],
         section,
       };
       return newState;

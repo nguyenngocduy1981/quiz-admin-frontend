@@ -1,5 +1,5 @@
 import {
-  LOAD_EXAM_PREVIEW_SUCCESS, ERROR, CANCEL_EXAM
+  LOAD_EXAM_PREVIEW_SUCCESS, ERROR, CANCEL_EXAM, LOAD_EXAM_BY_ID, LOAD_EXAM_BY_ID_SUCCESS
 } from './actions';
 import {clearExam} from "../../utils/local-storage";
 
@@ -7,12 +7,23 @@ import {clearExam} from "../../utils/local-storage";
 export const initialState = {
   loading: false,
   error: false,
-  exam: {}
+  exam: []
 };
 
 
 function examPreviewReducer(state = initialState, action) {
   switch (action.type) {
+    case LOAD_EXAM_BY_ID: {
+      return {...state, loading: true};
+    }
+    case LOAD_EXAM_BY_ID_SUCCESS: {
+      const newState = {
+        ...state,
+        loading: false,
+        exam: action.payload
+      };
+      return newState;
+    }
     case CANCEL_EXAM: {
       clearExam();
       return {...state, exam: {}};

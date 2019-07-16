@@ -7,4 +7,20 @@
       color: #41ADDD;
     }
   }
+
+  .correct {
+    color: #41ADDD;
+  }
+
+  .op {
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    span {
+      padding-left: 10px;
+      padding-right: 10px;
+      margin-left: 15px;
+      border: 1px solid #41ADDD;
+    }
+  }
 }

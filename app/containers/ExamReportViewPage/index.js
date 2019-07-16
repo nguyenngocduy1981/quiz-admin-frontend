@@ -16,7 +16,7 @@ import './style.scss';
 import {Helmet} from 'react-helmet';
 import Error from "../../components/Error";
 import NoData from "../../components/NoData";
-import {REPORTS} from "../../constants/service-model";
+import {REPORTS, REPORTS_JSON, REPORTS_PDF} from "../../constants/service-model";
 
 const _ = require('lodash');
 const $ = require('jquery');
@@ -47,6 +47,18 @@ class ExamReportViewPage extends React.Component {
     this.props.goHome();
   }
 
+  onDownloadFile = id => {
+    const url = `${REPORTS}/${id}`;
+    location.href = url;
+  }
+  onMouseOver = idx => {
+    $(`#item_${idx}`).show();
+  }
+
+  onMouseOut = idx => {
+    $(`#item_${idx}`).hide();
+  }
+
   renderSummary = () => {
     return (
       <div className={'row q-container'}>
@@ -62,7 +74,15 @@ class ExamReportViewPage extends React.Component {
 
   renderExam = (e, idx) => {
     return (
-      <div key={idx} className={'item'}><a href={`${REPORTS}/${e.id}`}>{e.id} - {e.title}</a></div>
+      <div key={idx} className={'item'}
+           onMouseOver={e => this.onMouseOver(idx)}
+           onMouseOut={e => this.onMouseOut(idx)}>
+        <span>{e.title}</span>
+        <ul id={`item_${idx}`}>
+          <li><a href={`${REPORTS_PDF}/${e.id}`}>PDF</a></li>
+          <li><a href={`${REPORTS_JSON}/${e.id}`}>JSON</a></li>
+        </ul>
+      </div>
     );
   }
 

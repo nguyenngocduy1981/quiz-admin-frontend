@@ -1,5 +1,8 @@
+export const ENTER_KEY = 13;
 export const VELOCITY = 'slow';
 export const MAX_CHARS_TO_BE_SEARCHED = 10;
+
+export const ABC_ANS = ['A', 'B', 'C', 'D'];
 
 export const CONFIRM_ACTION = {
   YES: 'y',
@@ -19,16 +22,21 @@ export const LINKS = {
   preview_exam: 'Xem trước bài thi',
   select_all: 'Chọn tất cả',
   deselect_all: 'Bỏ chọn',
-  them_dm: 'Thêm loại câu hỏi',
+  category: 'Danh mục',
+  them_sec: 'Thêm loại câu hỏi',
   them_moi: 'Thêm mới',
   them_q: 'Thêm câu hỏi',
-  dm: 'Loại câu hỏi',
+  section: 'Loại câu hỏi',
   luu: 'Lưu',
   add_q: 'Thêm câu hỏi',
   report: 'Report',
+  exam_result: 'Kết quả',
+  upload_result: 'Upload kết quả',
 }
 export const PLACE_HOLDER = {
   sec: 'loại câu hỏi',
+  passage: 'đoạn văn',
+  no_of_ques: 'số lượng câu hỏi',
   q: 'câu hỏi',
   ans: 'đáp án',
   ans_a: 'đáp án A',
@@ -37,7 +45,7 @@ export const PLACE_HOLDER = {
   ans_d: 'đáp án D',
 }
 export const ERROR_MSG = {
-  ERR_MANDATORY: 'Một số thông tin chưa được nhập<br/>Hoặc đáp án trong 1 loại câu hỏi trùng nhau',
+  ERR_MANDATORY: '<ul class="error-list"><li>Thông tin chưa nhập đủ</li><li>Đáp án trùng nhau</li><li>Câu hỏi lựa chọn chưa có đáp án</li></ul>',
   ERR_NEED_SOLVED_FIRST: 'Xử lý lỗi vừa rồi trước khi làm tiếp',
   ERR_EXISTED_S: 'Loại câu hỏi đã tồn tại trong danh sách này rồi',
   ERR_EXISTED_A: 'Câu trả lời trùng lặp trong câu hỏi này',
@@ -53,9 +61,17 @@ export const OPTION_FROM_GIVEN = 'OPTION_FROM_GIVEN';
 export const REORDER_SENTENCE = 'REORDER_SENTENCE';
 export const TEXT = 'TEXT';
 export const OPTION = 'OPTION';
-export const QUESTION_TEXT_TYPES = [TEXT, REORDER_SENTENCE, OPTION_FROM_GIVEN];
-export const QUESTION_TYPES = [TEXT, REORDER_SENTENCE, OPTION_FROM_GIVEN, OPTION];
-export const QUESTION_OPTION_TYPES = [OPTION];
+export const PASSAGE_TEXT = 'PASSAGE_TEXT';
+export const PASSAGE_OPTION = 'PASSAGE_OPTION';
+export const PASSAGE_OPTION_FROM_GIVEN = 'PASSAGE_OPTION_FROM_GIVEN';
+
+export const PASSAGE_TEXT_TYPES = [PASSAGE_TEXT, PASSAGE_OPTION_FROM_GIVEN];/*answer = text*/
+export const PASSAGE_TYPES = [PASSAGE_TEXT, PASSAGE_OPTION, PASSAGE_OPTION_FROM_GIVEN];
+
+export const QUESTION_TEXT_TYPES = [TEXT, REORDER_SENTENCE, OPTION_FROM_GIVEN, PASSAGE_TEXT, PASSAGE_OPTION_FROM_GIVEN];
+export const QUESTION_TYPES = [TEXT, OPTION, REORDER_SENTENCE, OPTION_FROM_GIVEN, PASSAGE_TEXT, PASSAGE_OPTION, PASSAGE_OPTION_FROM_GIVEN];
+export const OPTION_FROM_GIVEN_TYPE = [OPTION_FROM_GIVEN, PASSAGE_OPTION_FROM_GIVEN];
+export const QUESTION_OPTION_TYPES = [OPTION, PASSAGE_OPTION];
 export const ACTION = {
   NEW: 'new',
   TEMP_SAVE: 'temp_save',

@@ -21,9 +21,17 @@ const makeSelectCategories = () => createSelector(
   selectGlobal,
   (globalState) => globalState.categories
 );
+const makeSelectChildCategories = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.childCategories
+);
 const makeSelectSelectedCat = () => createSelector(
   selectGlobal,
   (globalState) => globalState.selectedCat
+);
+const makeSelectSelectedChildCat = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.selectedChildCat
 );
 const makeSelectExam = () => createSelector(
   selectGlobal,
@@ -38,5 +46,7 @@ export {
   makeSelectSections,
   makeSelectCategories,
   makeSelectSelectedCat,
-  makeSelectExam
+  makeSelectSelectedChildCat,
+  makeSelectExam,
+  makeSelectChildCategories
 };

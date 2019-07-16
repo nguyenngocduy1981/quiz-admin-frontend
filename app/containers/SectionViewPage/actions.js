@@ -1,12 +1,18 @@
 export const RESET_SECTIONS = '[SectionViewPage] RESET_SECTIONS';
+
 export const LOAD_SECTIONS = '[SectionViewPage] Load sections';
 export const LOAD_SECTIONS_SUCCESS = '[SectionViewPage] Load sections SUCCESS';
+
 export const LOAD_SECTIONS_ERROR = '[SectionViewPage] Load sections ERROR';
+
 export const DELETE_SECTION = '[SectionViewPage] DELETE_SECTION';
 export const DELETE_SECTION_SUCCESS = '[SectionViewPage] DELETE_SECTION_SUCCESS';
 
 export const LOAD_CATEGORIES = '[SectionViewPage] Load LOAD_CATEGORIES';
 export const LOAD_CATEGORIES_SUCCESS = '[SectionViewPage] Load LOAD_CATEGORIES SUCCESS';
+
+export const LOAD_CHILD_CATEGORIES = '[SectionViewPage] Load LOAD_CHILD_CATEGORIES';
+export const LOAD_CHILD_CATEGORIES_SUCCESS = '[SectionViewPage] Load LOAD_CHILD_CATEGORIES SUCCESS';
 
 export const CANCEL_EXAM = '[SectionViewPage] CANCEL_EXAM';
 export const CREATE_EXAM = '[SectionViewPage] CREATE_EXAM';
@@ -60,10 +66,10 @@ export function resetSections(catId) {
   };
 }
 
-export function loadSections(catId) {
+export function loadSections(payload) {
   return {
     type: LOAD_SECTIONS,
-    catId
+    payload
   };
 }
 
@@ -75,15 +81,30 @@ export function loadedSections(payload) {
 }
 
 
-export function loadCategories() {
+export function loadCategories(payload) {
   return {
-    type: LOAD_CATEGORIES
+    type: LOAD_CATEGORIES,
+    payload
   };
 }
 
 export function loadCategoriesSuccess(payload) {
   return {
     type: LOAD_CATEGORIES_SUCCESS,
+    payload,
+  };
+}
+
+export function loadChildCategories(payload) {
+  return {
+    type: LOAD_CHILD_CATEGORIES,
+    payload
+  };
+}
+
+export function loadChildCategoriesSuccess(payload) {
+  return {
+    type: LOAD_CHILD_CATEGORIES_SUCCESS,
     payload,
   };
 }

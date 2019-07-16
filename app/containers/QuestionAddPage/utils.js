@@ -1,4 +1,4 @@
-import {OPTION_FROM_GIVEN, QUESTION_TEXT_TYPES} from "../../constants/questions";
+import {OPTION_FROM_GIVEN, PASSAGE_OPTION_FROM_GIVEN, QUESTION_TEXT_TYPES} from "../../constants/questions";
 
 const _ = require('lodash');
 
@@ -13,6 +13,7 @@ function isEmptyTextQuestion(q) {
 
 function isEmptyPosQuestion(q) {
   // TODO cho nay can check "answer possible answer nua
+  // !q.answer || q.answer === '' || kong nen validate cai nay nua, vi cho phep add nhieu cau hoi
   const pos = q.pos;
   return q.text === '' ||
     pos.length === 0 ||
@@ -20,6 +21,13 @@ function isEmptyPosQuestion(q) {
     pos.b === '' ||
     pos.c === '' ||
     pos.d === '';
+}
+
+function isEmptyPassageQuestion(q) {
+  const {passages} = q;
+  const len = passages.length;
+
+  return q.text === '' || passages.filter(p => p.answer.length > 0).length !== len;
 }
 
 function isAnsInGiven(sec, q) {
@@ -30,33 +38,26 @@ function isOPTION_FROM_GIVEN(q) {
   return q.questionType === OPTION_FROM_GIVEN;
 }
 
-export function validateOption(questions) {
-  return questions.map(q => {
-    const pos = q.pos;
-    q.error = q.text === '' ||
-      pos.length === 0 ||
-      pos.a === '' ||
-      pos.b === '' ||
-      pos.c === '' ||
-      pos.d === '';
-
-    return q;
-  });
-}
-
-export function validateText(questions) {
-  return questions.map(q => {
-    q.error = q.text === '';
-    return q;
-  });
-}
-
-export function validateQuestions(questions, type) {
-  if (QUESTION_TEXT_TYPES.includes(type)) {
-    return validateText(questions);
-  }
-  return validateOption(questions);
-}
+// export function validateOption(questions) {
+//   return questions.map(q => {
+//     const pos = q.pos;
+//     q.error = q.text === '' ||
+//       pos.length === 0 ||
+//       pos.a === '' ||
+//       pos.b === '' ||
+//       pos.c === '' ||
+//       pos.d === '';
+//
+//     return q;
+//   });
+// }
+//
+// export function validateText(questions) {
+//   return questions.map(q => {
+//     q.error = q.text === '';
+//     return q;
+//   });
+// }
 
 export function resetQuestionError(questions) {
   return questions.map(q => {
@@ -79,6 +80,14 @@ export function setEmptyQuestionError(questions, type) {
       return q;
     });
   }
+  // if (PASSAGE === type) {
+  //   // return questions.filter(isEmptyPassageQuestion).length > 0;
+  //   return questions.map(q => {
+  //     q.error = isEmptyPassageQuestion(q)
+  //     return q;
+  //   });
+  // }
+
   return questions.map(q => {
     q.error = isEmptyPosQuestion(q)
     return q;
@@ -118,6 +127,9 @@ export function isEmptyQuestions(questions, type) {
   if (QUESTION_TEXT_TYPES.includes(type)) {
     return questions.filter(isEmptyTextQuestion).length > 0;
   }
+  if (PASSAGE_OPTION_FROM_GIVEN === type) {
+    return questions.filter(isEmptyPassageQuestion).length > 0;
+  }
   return questions.filter(isEmptyPosQuestion).length > 0;
 }
 
@@ -126,6 +138,7 @@ export function isQuestionsExisted(questions) {
   return _.uniq(questions.map(q => q.text)).length !== len;
 }
 
-export function hasError(questions) {
-  return questions.filter(q => q.error).length > 0;
-}
+//
+// export function hasError(questions) {
+//   return questions.filter(q => q.error).length > 0;
+// }

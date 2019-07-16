@@ -45,10 +45,10 @@ export function removeQuestionSuccess(id) {
 }
 
 
-export function goHome(catId) {
+export function goHome(payload) {
   return {
     type: GO_HOME,
-    catId
+    payload
   };
 }
 

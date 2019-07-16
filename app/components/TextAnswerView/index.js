@@ -8,7 +8,7 @@ class TextAnswerView extends React.Component {
   }
 
   render() {
-    const {idx, ques, inExam} = this.props;
+    const {ques, inExam} = this.props;
     const rm = {action: QUES_ACTION.REMOVE, ques};
     const add2Exam = {action: QUES_ACTION.ADD_2_EXAM, ques};
     return (

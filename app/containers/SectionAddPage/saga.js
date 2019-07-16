@@ -5,32 +5,35 @@ import {
 import {push} from 'react-router-redux';
 
 import request from 'utils/request';
-import {CATEGORIES, SECTION_CHECK, SECTIONS} from '../../constants/service-model';
+import {
+  CATEGORIES, CHILD_CATEGORY, SECTION_CHECK, SECTIONS
+} from '../../constants/service-model';
 import {
   CHECK_EXISTED_SECTION,
   GO_HOME,
-  LOAD_CATEGORIES,
-  loadCategoriesSuccess, markExistedSection,
+  LOAD_CATEGORIES, LOAD_CATEGORY,
+  loadCategoriesSuccess, loadCategorySuccess, markExistedSection,
   requestError,
   SAVE_SECTION,
   saveSectionSuccess,
   SELECT_CATEGORY
-} from "./actions";
-import {SECTION_NEW_R} from "../../constants/routers";
-import {post} from "../../utils/request-method";
-import notify from "../../utils/notify";
-import {checkBeforeSave} from "./utils";
-import {ERROR_MSG} from "../../constants/questions";
+} from './actions';
+import {SECTION_NEW_R, SECTION_R} from '../../constants/routers';
+import {post} from '../../utils/request-method';
+import notify from '../../utils/notify';
+import {checkBeforeSave} from './utils';
+import {ERROR_MSG, OPTION_FROM_GIVEN, PASSAGE_TYPES} from '../../constants/questions';
 
 const _ = require('lodash');
 
-export function* goHome() {
-  yield put(push('/'));
+export function* goHome(pl) {
+  const {parentId, childId} = pl.payload;
+  yield put(push(`${SECTION_R}/${parentId}/${childId}`));
 }
 
-export function* changeCategory(payload) {
-  yield put(push(SECTION_NEW_R + '/' + payload.id));
-}
+// export function* changeCategory(payload) {
+//   yield put(push(SECTION_NEW_R + '/' + payload.id));
+// }
 
 export function* checkExistedSection(req) {
   try {
@@ -40,7 +43,6 @@ export function* checkExistedSection(req) {
       notify(ERROR_MSG.ERR_EXISTED_S);
       yield put(markExistedSection(id));
     }
-
   } catch (err) {
     yield put(requestError());
   }
@@ -55,24 +57,48 @@ export function* fetchCategories() {
   }
 }
 
-function convertSection(sec, cat) {
-  const {text, questionType, options} = sec;
-  return {text, questionType, categoryIds: [cat], options};
+export function* fetchCategory(payload) {
+  try {
+    const {id} = payload;
+    const res = yield call(request, `${CHILD_CATEGORY}/${id}`);
+    yield put(loadCategorySuccess(res.data));
+  } catch (err) {
+    yield put(requestError());
+  }
+}
+
+function convertSection(sec, categoryId) {
+  const {
+    text, questionType, sectionOptions, passageText, passageOptions
+  } = sec;
+  const type = sec.questionType;
+  if (type === OPTION_FROM_GIVEN) {
+    return {
+      text, questionType, categoryId, sectionOptions
+    };
+  }
+  if (PASSAGE_TYPES.includes(type)) {
+    return {
+      text, questionType, categoryId, passageText, passageOptions
+    };
+  }
+
+  return {text, questionType, categoryId};
 }
 
 function convert2Save(sections, cat) {
-  return sections.map(sec => convertSection(sec, cat));
+  return sections.map((sec) => convertSection(sec, cat));
 }
 
 export function* saveSections(req) {
   try {
-    const {sections, cat} = req.payload;
+    const {sections, catId} = req.payload;
 
     let hasError;
     if (hasError = !checkBeforeSave(sections)) {
       notify(ERROR_MSG.ERR_MANDATORY);
     } else {
-      const res = yield call(request, SECTIONS, post(convert2Save(sections, cat)));
+      const res = yield call(request, SECTIONS, post(convert2Save(sections, catId)));
       if (res.error) {
         hasError = true;
         notify(res.error.message);
@@ -93,8 +119,9 @@ export default function* questionsData() {
   // It returns task descriptor (just like fork) so we can continue execution
   // It will be cancelled automatically on component unmount
   yield takeLatest(LOAD_CATEGORIES, fetchCategories);
+  yield takeLatest(LOAD_CATEGORY, fetchCategory);
   yield takeLatest(SAVE_SECTION, saveSections);
-  yield takeLatest(SELECT_CATEGORY, changeCategory);
+  // yield takeLatest(SELECT_CATEGORY, changeCategory);
   yield takeLatest(CHECK_EXISTED_SECTION, checkExistedSection);
   yield takeLatest(GO_HOME, goHome);
 }

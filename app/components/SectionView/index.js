@@ -3,7 +3,7 @@ import {OPTION_FROM_GIVEN} from '../../constants/questions';
 
 const _ = require('lodash');
 
-class SectionTypeOptionFromGivenView extends React.Component {
+class SectionView extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -43,4 +43,4 @@ class SectionTypeOptionFromGivenView extends React.Component {
   }
 }
 
-export default SectionTypeOptionFromGivenView;
+export default SectionView;

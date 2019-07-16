@@ -2,6 +2,9 @@ export const SELECT_CATEGORY = '[SectionAddPage] Load SELECT_CATEGORY';
 export const LOAD_CATEGORIES = '[SectionAddPage] Load LOAD_CATEGORIES';
 export const LOAD_CATEGORIES_SUCCESS = '[SectionAddPage] Load LOAD_CATEGORIES SUCCESS';
 
+export const LOAD_CATEGORY = '[SectionAddPage] Load LOAD_CATEGORY';
+export const LOAD_CATEGORY_SUCCESS = '[SectionAddPage] Load LOAD_CATEGORIES LOAD_CATEGORY_SUCCESS';
+
 export const DELETE_SECTION = '[SectionAddPage] DELETE_SECTION';
 export const NEW_SECTION = '[SectionAddPage] NEW_SECTION';
 export const TEMP_SAVE_SECTION = '[SectionAddPage] TEMP_SAVE_SECTION';
@@ -15,9 +18,10 @@ export const REQ_ERROR = '[SectionAddPageREQ_ERROR';
 
 export const GO_HOME = '[SectionAddPage] GO_HOME';
 
-export function goHome() {
+export function goHome(payload) {
   return {
-    type: GO_HOME
+    type: GO_HOME,
+    payload
   };
 }
 
@@ -25,6 +29,19 @@ export function selectCategory(id) {
   return {
     type: SELECT_CATEGORY,
     id
+  };
+}
+
+export function loadCategory(id) {
+  return {
+    type: LOAD_CATEGORY,
+    id
+  };
+}
+export function loadCategorySuccess(payload) {
+  return {
+    type: LOAD_CATEGORY_SUCCESS,
+    payload
   };
 }
 

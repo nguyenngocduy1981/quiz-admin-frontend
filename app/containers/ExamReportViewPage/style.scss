@@ -27,9 +27,38 @@
     cursor: pointer;
     border-radius: 4px;
 
+    position: relative;
+
     &:active {
       background: #41ADDD;
       color: #FFF;
+    }
+
+    &:hover {
+      background: #ced4da;
+      //border: 1px solid transparent;
+    }
+
+    ul {
+      display: none;
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      list-style: none;
+      overflow: auto;
+      padding: 0;
+
+      background: #FFF;
+      li {
+        float: left;
+        //padding: 5px 10px;
+        padding: 9px;
+        margin: 0;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 }

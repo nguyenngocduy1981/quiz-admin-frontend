@@ -5,10 +5,15 @@ import {
   NEW_SECTION,
   TEMP_SAVE_SECTION,
   SAVE_SECTION,
-  SAVE_SECTION_SUCCESS, SELECT_CATEGORY, MARK_EXISTED_SECTION, CHECK_EXISTED_SECTION, DELETE_SECTION
+  SAVE_SECTION_SUCCESS,
+  SELECT_CATEGORY,
+  MARK_EXISTED_SECTION,
+  CHECK_EXISTED_SECTION,
+  DELETE_SECTION,
+  LOAD_CATEGORY_SUCCESS
 } from './actions';
 import getId from "../../utils/datetime";
-import {TEXT} from "../../constants/questions";
+import {OPTION_FROM_GIVEN, PASSAGE_TYPES, TEXT} from "../../constants/questions";
 import {checkSectionRequired, setSectionError} from "./utils";
 
 const _ = require('lodash');
@@ -29,9 +34,12 @@ function createNew() {
   const newSec = {
     id: getId(),
     text: '',
+    sectionOptions: [''],
     questionType: TEXT,
-    categoryIds: [],
-    options: ['']
+    categoryId: '',
+    noOfQues: 0,
+    passageText: '',
+    passageOptions: [''],
   };
 
   return newSec;
@@ -43,6 +51,7 @@ export const initialState = {
   error: false,
   sections: false,
   categories: false,
+  category: false,
   selectedCat: false
 };
 
@@ -67,6 +76,16 @@ function sectionAddReducer(state = initialState, action) {
       return newState;
     }
 
+    case LOAD_CATEGORY_SUCCESS: {
+    console.log('LOAD_CATEGORY_SUCCESS: ', action);
+      const newState = {
+        ...state,
+        loading: false,
+        category: action.payload,
+      };
+      return newState;
+    }
+
     case NEW_SECTION: {
       let sections = toSections(state);
       sections = setSectionError(sections);
@@ -85,12 +104,22 @@ function sectionAddReducer(state = initialState, action) {
       return {...state, sections};
     }
     case TEMP_SAVE_SECTION: {
+      console.log('save tem: ', action.payload);
       const sec = action.payload;
       const sections = toSections(state);
       const oldSec = _.find(sections, ['id', sec.id]);
       oldSec.text = sec.text;
-      oldSec.questionType = sec.questionType;
+      oldSec.categoryId = sec.categoryId;
 
+      const type = oldSec.questionType;
+      if (PASSAGE_TYPES.includes(type)) {
+        oldSec.passageText = sec.passageText;
+        oldSec.passageOptions = sec.passageOptions;
+        oldSec.noOfQues = sec.noOfQues;
+      } else if (OPTION_FROM_GIVEN === type) {
+        oldSec.noOfQues = sec.noOfQues;
+        oldSec.sectionOptions = sec.sectionOptions;
+      }
       return {...state, sections};
     }
     case DELETE_SECTION: {
@@ -109,13 +138,13 @@ function sectionAddReducer(state = initialState, action) {
       return {...state, sections};
     }
 
-    case SELECT_CATEGORY: {
-      return {
-        ...state,
-        sections: false,
-        selectedCat: action.id
-      };
-    }
+    // case SELECT_CATEGORY: {
+    //   return {
+    //     ...state,
+    //     sections: false,
+    //     selectedCat: action.id
+    //   };
+    // }
 
     case SAVE_SECTION: {
       return {

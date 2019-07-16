@@ -1,13 +1,6 @@
-import toast from 'toasted-notes';
 import React from 'react';
-
-// https://toasted-notes.netlify.com/
+import {ToastsStore} from 'react-toasts';
+// https://www.npmjs.com/package/react-toasts
 export default function notify(msg, dur) {
-  toast.notify(<span dangerouslySetInnerHTML={{__html: msg}}/>,
-    {
-      type: 'success',
-      position: 'top-right',
-      duration: dur || 2000
-    }
-  );
+  ToastsStore.error(<span dangerouslySetInnerHTML={{__html: msg}}/>, dur || 2000);
 }

@@ -23,7 +23,11 @@ const makeSelectQuestions = () => createSelector(
   selectGlobal,
   (globalState) => globalState.questions
 );
-const makeSelectExam= () => createSelector(
+const makeSelectPassage = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.passage
+);
+const makeSelectExam = () => createSelector(
   selectGlobal,
   (globalState) => globalState.exam
 );
@@ -34,5 +38,6 @@ export {
   makeSelectError,
   makeSelectSection,
   makeSelectQuestions,
+  makeSelectPassage,
   makeSelectExam
 };

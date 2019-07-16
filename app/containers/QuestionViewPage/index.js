@@ -7,7 +7,7 @@ import LoadingIndicator from 'components/LoadingIndicator';
 import {
   makeSelectLoading,
   makeSelectError,
-  makeSelectSection, makeSelectQuestions, makeSelectExam,
+  makeSelectSection, makeSelectQuestions, makeSelectExam, makeSelectPassage,
 } from './selectors';
 import {add2Exam, add2ExamBulk, getQuestions, goHome, loadExamFromLocalStorage, removeQuestion} from './actions';
 import saga from './saga';
@@ -16,13 +16,22 @@ import './style.scss';
 import {Helmet} from 'react-helmet';
 import PossibleAnswerView from "../../components/PossibleAnswerView";
 import Error from "../../components/Error";
-import {CONFIRM_ACTION, ERROR_MSG, LINKS, QUES_ACTION, QUESTION_TEXT_TYPES, VELOCITY} from "../../constants/questions";
+import {
+  CONFIRM_ACTION,
+  ERROR_MSG,
+  LINKS, PASSAGE_OPTION_FROM_GIVEN,
+  PASSAGE_TEXT, PASSAGE_TYPES,
+  QUES_ACTION,
+  QUESTION_TEXT_TYPES,
+  VELOCITY
+} from "../../constants/questions";
 import TextAnswerView from "../../components/TextAnswerView";
 import AddQuesLink from "../../components/AddQuesLink";
 import AddSectionLink from "../../components/AddSectionLink";
-import SectionTypeOptionFromGivenView from "../../components/SectionTypeOptionFromGivenView";
+import SectionView from "../../components/SectionView";
 import {getExam} from "../../utils/local-storage";
 import ConfirmModal from "../../components/ConfirmModal";
+import PassageAnswerView from "../../components/PassageAnswerView";
 
 const _ = require('lodash');
 const $ = require('jquery');
@@ -109,19 +118,26 @@ class QuestionViewPage extends React.Component {
     return false;
   }
 
-  renderQuestion = (q, idx) => {
-    const payload = {sectionId: q.sectionId, quesId: q.id};
+  renderQuestion = (section, q, idx) => {
+    const payload = {sectionId: section.id, quesId: q.id};
     const inExam = this.checkInExam(payload)
+    if (PASSAGE_TYPES.includes(q.type)) {
+      return (<PassageAnswerView key={idx} idx={idx + 1} section={section}
+                                 ques={q} inExam={inExam}
+                                 onDoAction={this.onDoAction}/>);
+    }
+
     if (QUESTION_TEXT_TYPES.includes(q.type)) {
       return (<TextAnswerView key={idx} idx={idx + 1} ques={q} inExam={inExam}
                               onDoAction={this.onDoAction}/>);
     }
+
     return (<PossibleAnswerView key={idx} idx={idx + 1} ques={q} inExam={inExam}
                                 onDoAction={this.onDoAction}/>);
   }
   goHome = () => {
-    const {catId} = this.props.match.params;
-    this.props.goHome(catId);
+    const {id, catId, childCatId} = this.props.match.params;
+    this.props.goHome({catId, childCatId});
   }
 
   add2ExamBulk = (quesList) => {
@@ -139,7 +155,7 @@ class QuestionViewPage extends React.Component {
     this.add2ExamBulk(ids);
   }
 
-  renderSummary = (catId) => {
+  renderSummary = () => {
     const {section, questions} = this.props;
     const len = questions.length;
 
@@ -147,6 +163,7 @@ class QuestionViewPage extends React.Component {
     const quesListInExam = getExam()[sectionId];
     const lenInExam = quesListInExam ? quesListInExam.length : 0;
 
+    const {catId, childCatId} = this.props.match.params;
     return (
       <div className={'row q-container'}>
         <div className={'col-sm-12 col-md-12 col-lg-12 summary'}>
@@ -154,8 +171,8 @@ class QuestionViewPage extends React.Component {
             <span className={'btn m-r-10'} onClick={this.goHome}>&lt;&lt;</span>
             <span className={'m-l-10 active'}>{section.text}</span>
             <span className={'m-l-10 m-r-10 badge badge-secondary'}>{lenInExam}/{len}</span>
-            <AddQuesLink sectionId={sectionId} catId={catId}/>
-            <AddSectionLink/>
+            <AddQuesLink sectionId={sectionId} catId={catId} childCatId = {childCatId}/>
+            <AddSectionLink catId={catId} childCatId={childCatId}/>
             {lenInExam !== len &&
             <span className={'btn m-r-10'} onClick={this.selectAll}>{LINKS.select_all}</span>
             }
@@ -168,9 +185,29 @@ class QuestionViewPage extends React.Component {
     );
   }
 
+  renderPASSAGE_OPTION_FROM_GIVEN(passage) {
+    const {options} = passage;
+    return (
+      <div className={'row q-container'}>
+        <div className={'col-md-12 op'}>
+          {options.map((o, idx) => <span key={idx}>{o}</span>)}
+        </div>
+      </div>
+    );
+  }
+
+  renderPassageTextHeader() {
+    const {passage} = this.props;
+    return (
+      <div className={'row q-container'}>
+        <div className={'col-md-12'} dangerouslySetInnerHTML={{__html: passage.text}}/>
+      </div>
+    );
+  }
+
   render() {
     const {
-      loading, error, section, questions
+      loading, error, section, passage, questions
     } = this.props;
 
     if (loading) {
@@ -179,35 +216,19 @@ class QuestionViewPage extends React.Component {
     if (error) {
       return <Error/>;
     }
-
-    const {catId} = this.props.match.params;
-
-    if (!section) {
-      return (
-        <div className={'row q-container'}>
-          <div className={'col-md-1 summary'}>
-            <span className={'btn'} onClick={this.props.goHome}>&lt;&lt;</span>
-          </div>
-          <div className={'col-md-2'}>
-            <span>{ERROR_MSG.ERR_NO_SEC_CHOOSEN}</span>
-          </div>
-          <div className={'col-md-2 summary'}>
-            <AddQuesLink sectionId={this.state.sectionId} catId={catId}/>
-            <AddSectionLink/>
-          </div>
-        </div>
-      );
-    }
-
+    const type = section.questionType;
     return (
       <article>
         <Helmet>
           <title>QuestionViewPage</title>
         </Helmet>
         <div className="ques-view-page">
-          {this.renderSummary(catId)}
-          <SectionTypeOptionFromGivenView section={section}/>
-          {questions.map(this.renderQuestion)}
+          {this.renderSummary()}
+          {type === PASSAGE_OPTION_FROM_GIVEN && this.renderPASSAGE_OPTION_FROM_GIVEN(passage)}
+          {PASSAGE_TYPES.includes(type) && this.renderPassageTextHeader()}
+
+          {section && <SectionView section={section}/>}
+          {questions && questions.map((q, idx) => this.renderQuestion(section, q, idx))}
           <ConfirmModal id={CONFIRM_MODAL_ID} onConfirm={this.onModalConfirm}/>
         </div>
       </article>
@@ -228,6 +249,7 @@ const
 const
   mapStateToProps = createStructuredSelector({
     questions: makeSelectQuestions(),
+    passage: makeSelectPassage(),
     section: makeSelectSection(),
     loading: makeSelectLoading(),
     exam: makeSelectExam(),

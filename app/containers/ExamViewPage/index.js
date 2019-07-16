@@ -9,13 +9,20 @@ import {
   makeSelectError,
   makeSelectExam,
 } from './selectors';
-import {cancelExam, createExam, goHome, loadExamPreview} from './actions';
+import {cancelExam, createExam, goHome, loadExamPreview, viewExamResult} from './actions';
 import saga from './saga';
 
 import './style.scss';
 import {Helmet} from 'react-helmet';
 import Error from "../../components/Error";
-import {CONFIRM_ACTION, LINKS, QUESTION_TEXT_TYPES, VELOCITY} from "../../constants/questions";
+import {
+  CONFIRM_ACTION,
+  LINKS,
+  PASSAGE_TYPES,
+  PASSAGE_OPTION_FROM_GIVEN,
+  QUESTION_TEXT_TYPES,
+  VELOCITY
+} from "../../constants/questions";
 import NoData from "../../components/NoData";
 import TextAnswerViewOnly from "../../components/TextAnswerViewOnly";
 import PossibleAnswerViewOnly from "../../components/PossibleAnswerViewOnly";
@@ -29,6 +36,7 @@ class ExamViewPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isPreview: true,
       modalShown: false,
       sectionId: 0,
       flag: {}
@@ -38,7 +46,14 @@ class ExamViewPage extends React.Component {
   componentDidMount() {
     document.addEventListener('keydown', this.escFunction, false);
 
-    this.props.loadExamPreview();
+    const {exam} = this.props.match.params;
+    if (exam) {
+      this.setState({isPreview: false}, () => {
+        this.props.viewExamResult(exam);
+      });
+    } else {
+      this.props.loadExamPreview();
+    }
   }
 
   componentWillUnmount() {
@@ -59,6 +74,7 @@ class ExamViewPage extends React.Component {
     if (QUESTION_TEXT_TYPES.includes(q.type)) {
       return (<TextAnswerViewOnly key={idx} idx={idx + 1} ques={q}/>);
     }
+
     return (<PossibleAnswerViewOnly key={idx} idx={idx + 1} ques={q}/>);
   }
 
@@ -74,48 +90,78 @@ class ExamViewPage extends React.Component {
   }
 
   goHome = () => {
-    const {catId} = this.props.match.params;
-    this.props.goHome(catId);
+    const {catId, exam} = this.props.match.params;
+    this.props.goHome({catId, exam});
   }
 
-  toggleShow = (idx) => {
+  toggleShow = idx => e => {
     const {flag} = this.state;
     flag[idx] = !flag[idx];
     this.setState({flag});
   }
-  renderSection = (k, exam, idx) => {
-    const questions = exam[k];
+
+  renderPassageOption = (options) => {
+    return (
+      <div className={'row q-row'}>
+        <div className={'col-md-12 op'}>
+          {options.map((o, idx) => <span key={idx}>{o}</span>)}
+        </div>
+      </div>
+    );
+  }
+  renderPassage = (passage, type) => {
+    if (!PASSAGE_TYPES.includes(type)) return '';
+
+    return (
+      <div className={'q-container'}>
+        {type === PASSAGE_OPTION_FROM_GIVEN && this.renderPassageOption(passage.options)}
+        <div className={'row q-row'}>
+          <div className={'col-md-12'} dangerouslySetInnerHTML={{__html: passage.text}}/>
+        </div>
+      </div>
+    );
+  }
+
+  renderSection = (exam, idx) => {
+    const {section, passage, questions} = exam;
+    const type = section.questionType;
     const len = questions.length;
-    const sec = questions[0];
     const {flag} = this.state;
 
     return (
       <div className={'q-container'} key={idx}>
         <div className={'row q-row'}>
-          <div className={'col-md-12 selected-q sec-header-toggle'} onClick={e => this.toggleShow(idx)}>
-            <span dangerouslySetInnerHTML={{__html: sec.sectionName}}/>
-            <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len}</span>
+          <div className={'col-md-12 selected-q sec-header-toggle'} onClick={this.toggleShow(idx)}>
+            <span dangerouslySetInnerHTML={{__html: section.text}}/>
+            <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len} - {type}</span>
           </div>
         </div>
+        {!flag[idx] && this.renderPassage(passage, type)}
         {!flag[idx] && questions.map(this.renderQuestion)}
       </div>
     );
   }
   renderSummary = () => {
     const {exam} = this.props;
-    const keys = Object.keys(exam);
-    const len = keys.length === 0 ? 0 : keys.map(k => exam[k].length).reduce((a, b) => a + b);
+    const len = exam.length === 0 ? 0 :
+      exam.map(a => a.questions.length).reduce((a, b) => a + b);
+
+    const {isPreview} = this.state;
 
     return (
       <div className={'row q-container'}>
         <div className={'col-sm-12 col-md-12 col-lg-12 summary'}>
           <h5 className={'p-t-5'}>
             <span className={'btn m-r-10'} onClick={this.goHome}>&lt;&lt;</span>
+            {isPreview &&
             <span className={'btn'} onClick={this.cancelExam}>{LINKS.cancel_exam}</span>
+            }
+            {isPreview &&
             <span className={'btn'} onClick={this.createExam}>
               {LINKS.create_exam}
               <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len}</span>
             </span>
+            }
           </h5>
         </div>
       </div>
@@ -172,7 +218,7 @@ class ExamViewPage extends React.Component {
         </Helmet>
         <div className="exam-view-page">
           {this.renderSummary()}
-          {Object.keys(exam).map((k, idx) => this.renderSection(k, exam, idx))}
+          {exam.map(this.renderSection)}
           <InputModal id={INPUT_MODAL_ID} placeholder={'dd-mm-yyyy_name'}
                       onSubmit={this.onInputModalSubmit} shown={this.state.modalShown}/>
         </div>
@@ -185,6 +231,7 @@ const
   mapDispatchToProps = (dispatch) => ({
     loadExamPreview: () => dispatch(loadExamPreview()),
     cancelExam: () => dispatch(cancelExam()),
+    viewExamResult: (payload) => dispatch(viewExamResult(payload)),
     createExam: (payload) => dispatch(createExam(payload)),
     goHome: (payload) => dispatch(goHome(payload)),
   });

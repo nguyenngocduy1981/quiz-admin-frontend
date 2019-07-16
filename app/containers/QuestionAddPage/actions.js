@@ -70,10 +70,9 @@ export function saveQuestions(payload) {
   };
 }
 
-export function newQuestion(questionType) {
+export function newQuestion() {
   return {
-    type: NEW_QUESTION,
-    questionType
+    type: NEW_QUESTION
   };
 }
 
