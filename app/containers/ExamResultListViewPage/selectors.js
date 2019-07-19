@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 import {initialState} from './reducer';
 
-const selectGlobal = (state) => state.examResult || initialState;
+const selectGlobal = (state) => state.examsResult || initialState;
 
 const makeSelectLoading = () => createSelector(
   selectGlobal,
@@ -13,14 +13,14 @@ const makeSelectError = () => createSelector(
   (globalState) => globalState.error
 );
 
-const makeSelectExam= () => createSelector(
+const makeSelectExams = () => createSelector(
   selectGlobal,
-  (globalState) => globalState.exam
+  (globalState) => globalState.exams
 );
 
 export {
   selectGlobal,
   makeSelectLoading,
   makeSelectError,
-  makeSelectExam
+  makeSelectExams
 };

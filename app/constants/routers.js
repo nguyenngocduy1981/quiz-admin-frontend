@@ -1,5 +1,4 @@
 export const EXAM_RESULTS = '/exam/results';
-export const EXAM_VIEW = '/exam/view';
 export const EXAM_PREVIEW = '/exam/preview';
 export const CATEGORY = '/category';
 export const SECTION_R = '/section/view';

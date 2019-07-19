@@ -31,6 +31,14 @@ const makeSelectExam = () => createSelector(
   selectGlobal,
   (globalState) => globalState.exam
 );
+const makeSelectPageCount = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.pageCount
+);
+const makeSelectCurrentPage = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.currentPage
+);
 
 export {
   selectGlobal,
@@ -39,5 +47,7 @@ export {
   makeSelectSection,
   makeSelectQuestions,
   makeSelectPassage,
-  makeSelectExam
+  makeSelectExam,
+  makeSelectPageCount,
+  makeSelectCurrentPage,
 };

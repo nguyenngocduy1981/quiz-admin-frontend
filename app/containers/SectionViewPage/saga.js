@@ -67,7 +67,6 @@ export function* fetchCategories(pl) {
   try {
     const res = yield call(request, CATEGORIES);
     yield put(loadCategoriesSuccess(res.data));
-    console.log('pl pl: ' , pl);
     if (pl.payload) {
       const {parentId, childId} = pl.payload;
       yield put(loadChildCategories({parentId, childId, isNavigate: false}));

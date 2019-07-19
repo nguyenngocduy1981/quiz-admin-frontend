@@ -76,8 +76,6 @@ class QuestionAddPage extends React.Component {
   }
 
   onQuestionDataOutput = section => evt => {
-    console.log('onQuestionDataOutput: ', evt);
-    // const {questions} = this.props;
     const {action, data} = evt;
     switch (action) {
       case ACTION.NEW:

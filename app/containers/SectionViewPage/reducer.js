@@ -5,7 +5,7 @@ import {
   LOAD_SECTIONS_SUCCESS,
   LOAD_SECTIONS_ERROR,
   LOAD_CHILD_CATEGORIES, LOAD_CHILD_CATEGORIES_SUCCESS,
-  DELETE_SECTION_SUCCESS, LOAD_EXAM_FROM_LOCAL_STORAGE, CANCEL_EXAM, RESET_SECTIONS,
+  DELETE_SECTION_SUCCESS, LOAD_EXAM_FROM_LOCAL_STORAGE, CANCEL_EXAM, RESET_SECTIONS, TOGGLE_SECTION,
 } from './actions';
 import {clearExam, getExam} from "../../utils/local-storage";
 
@@ -23,6 +23,7 @@ export const initialState = {
   sections: false,
   categories: false,
   childCategories: false,
+  toggleChildCategories: true,
   selectedCat: false,
   selectedChildCat: false,
   exam: {}
@@ -30,6 +31,10 @@ export const initialState = {
 
 function sectionViewReducer(state = initialState, action) {
   switch (action.type) {
+    case TOGGLE_SECTION: {
+      const toggleChildCategories = !state.toggleChildCategories;
+      return {...state, toggleChildCategories};
+    }
     case RESET_SECTIONS: {
       return {...state, sections: false, selectedCat: false};
     }
@@ -40,7 +45,6 @@ function sectionViewReducer(state = initialState, action) {
       clearExam();
       return {...state, exam: {}};
     }
-    // TODO
     case LOAD_CATEGORIES: {
       let st = {...state, categories: false};
       if (!action.payload) {
@@ -60,7 +64,8 @@ function sectionViewReducer(state = initialState, action) {
         childCategories: false,
         sections: false,
         selectedChildCat: false,
-        selectedCat: action.id
+        selectedCat: action.payload.parentId,
+        toggleChildCategories: true
       };
       return newState;
     }
@@ -77,7 +82,6 @@ function sectionViewReducer(state = initialState, action) {
         selectedChildCat: childId,
         selectedCat: parentId
       };
-
       return newState;
     }
     case LOAD_SECTIONS_SUCCESS: {

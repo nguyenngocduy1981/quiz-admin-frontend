@@ -1,0 +1,12 @@
+.p {
+  color: #41ADDD;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.active {
+  color: grey;
+  text-decoration: underline;
+}

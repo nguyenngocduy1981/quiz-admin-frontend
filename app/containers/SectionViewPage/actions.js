@@ -14,6 +14,8 @@ export const LOAD_CATEGORIES_SUCCESS = '[SectionViewPage] Load LOAD_CATEGORIES S
 export const LOAD_CHILD_CATEGORIES = '[SectionViewPage] Load LOAD_CHILD_CATEGORIES';
 export const LOAD_CHILD_CATEGORIES_SUCCESS = '[SectionViewPage] Load LOAD_CHILD_CATEGORIES SUCCESS';
 
+export const TOGGLE_SECTION = '[SectionViewPage] TOGGLE_SECTION';
+
 export const CANCEL_EXAM = '[SectionViewPage] CANCEL_EXAM';
 export const CREATE_EXAM = '[SectionViewPage] CREATE_EXAM';
 
@@ -26,6 +28,12 @@ export function loadExamFromLocalStorage() {
 }
 
 export const GO_HOME = '[SectionViewPage] GO_HOME';
+
+export function toggleSection() {
+  return {
+    type: TOGGLE_SECTION
+  };
+}
 
 export function cancelExam() {
   return {

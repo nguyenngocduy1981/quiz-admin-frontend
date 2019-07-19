@@ -7,7 +7,7 @@ import LoadingIndicator from 'components/LoadingIndicator';
 import {
   makeSelectLoading,
   makeSelectError,
-  makeSelectSection, makeSelectQuestions, makeSelectExam, makeSelectPassage,
+  makeSelectSection, makeSelectQuestions, makeSelectExam, makeSelectPassage, makeSelectPageCount, makeSelectCurrentPage,
 } from './selectors';
 import {add2Exam, add2ExamBulk, getQuestions, goHome, loadExamFromLocalStorage, removeQuestion} from './actions';
 import saga from './saga';
@@ -32,6 +32,7 @@ import SectionView from "../../components/SectionView";
 import {getExam} from "../../utils/local-storage";
 import ConfirmModal from "../../components/ConfirmModal";
 import PassageAnswerView from "../../components/PassageAnswerView";
+import Pager from "../../components/Pager";
 
 const _ = require('lodash');
 const $ = require('jquery');
@@ -52,7 +53,7 @@ class QuestionViewPage extends React.Component {
 
     const {id} = this.props.match.params;
     this.setState({sectionId: id}, () => {
-      this.props.getQuestions({sectionId: id, page: 0});
+      this.props.getQuestions({sectionId: id, page: 1});
     });
 
     this.props.loadExamFromLocalStorage();
@@ -171,7 +172,7 @@ class QuestionViewPage extends React.Component {
             <span className={'btn m-r-10'} onClick={this.goHome}>&lt;&lt;</span>
             <span className={'m-l-10 active'}>{section.text}</span>
             <span className={'m-l-10 m-r-10 badge badge-secondary'}>{lenInExam}/{len}</span>
-            <AddQuesLink sectionId={sectionId} catId={catId} childCatId = {childCatId}/>
+            <AddQuesLink sectionId={sectionId} catId={catId} childCatId={childCatId}/>
             <AddSectionLink catId={catId} childCatId={childCatId}/>
             {lenInExam !== len &&
             <span className={'btn m-r-10'} onClick={this.selectAll}>{LINKS.select_all}</span>
@@ -205,9 +206,13 @@ class QuestionViewPage extends React.Component {
     );
   }
 
+  onPagerChange = page => {
+    const {id} = this.props.match.params;
+    this.props.getQuestions({sectionId: id, page});
+  }
   render() {
     const {
-      loading, error, section, passage, questions
+      loading, error, section, passage, questions, pageCount, currentPage
     } = this.props;
 
     if (loading) {
@@ -229,6 +234,8 @@ class QuestionViewPage extends React.Component {
 
           {section && <SectionView section={section}/>}
           {questions && questions.map((q, idx) => this.renderQuestion(section, q, idx))}
+          <Pager pageCount={pageCount} current={currentPage} onChange={this.onPagerChange}/>
+
           <ConfirmModal id={CONFIRM_MODAL_ID} onConfirm={this.onModalConfirm}/>
         </div>
       </article>
@@ -248,7 +255,9 @@ const
 
 const
   mapStateToProps = createStructuredSelector({
+    pageCount: makeSelectPageCount(),
     questions: makeSelectQuestions(),
+    currentPage: makeSelectCurrentPage(),
     passage: makeSelectPassage(),
     section: makeSelectSection(),
     loading: makeSelectLoading(),

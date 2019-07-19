@@ -11,12 +11,19 @@ import {
   makeSelectCategories,
   makeSelectSelectedCat,
   makeSelectExam,
-  makeSelectChildCategories, makeSelectSelectedChildCat,
+  makeSelectChildCategories, makeSelectSelectedChildCat, makeSelectToggleChildCategories,
 } from './selectors';
 import {
   cancelExam,
   createExam,
-  deleteSection, goHome, loadCategories, loadChildCategories, loadExamFromLocalStorage, loadSections, resetSections,
+  deleteSection,
+  goHome,
+  loadCategories,
+  loadChildCategories,
+  loadExamFromLocalStorage,
+  loadSections,
+  resetSections,
+  toggleSection,
 } from './actions';
 import saga from './saga';
 
@@ -114,7 +121,8 @@ class SectionViewPage extends React.Component {
                 title={LINKS.chi_tiet_q}>
             <i className="fa fa-bars" aria-hidden="true"></i>
           </Link>
-          <Link className="router-link m-l-5" to={`${QUESTIONS_NEW}/${sec.id}/${catId}/${childCatId}`} title={LINKS.them_q}>
+          <Link className="router-link m-l-5" to={`${QUESTIONS_NEW}/${sec.id}/${catId}/${childCatId}`}
+                title={LINKS.them_q}>
             <i className="fa fa-question-circle" aria-hidden="true"></i>
           </Link>
           <span className={'m-l-10 m-r-10 badge badge-secondary'}
@@ -205,7 +213,7 @@ class SectionViewPage extends React.Component {
     }
 
     return (
-      <table className={'table'}>
+      <table className={'table table-hover'}>
         <thead>
         <tr>
           <th>#</th>
@@ -219,6 +227,9 @@ class SectionViewPage extends React.Component {
     );
   }
 
+  toggleChildren = evt => {
+    this.props.toggleSection();
+  }
 
   renderFullActionList = () => {
 
@@ -276,6 +287,9 @@ class SectionViewPage extends React.Component {
           </h5>
           <h5 className={'p-t-5'}>
             {this.renderCategories()}
+            <span className={'btn'}
+                  onClick={this.toggleChildren}
+            >Ẩn/Hiện</span>
           </h5>
         </div>
         <div className={'col-4 col-sm-6 col-md-6 col-lg-5  actions'}>
@@ -302,7 +316,7 @@ class SectionViewPage extends React.Component {
   }
 
   render() {
-    const {childCategories, selectedChildCat} = this.props;
+    const {toggleChildCategories, childCategories, selectedChildCat} = this.props;
     return (
       <article>
         <Helmet>
@@ -310,9 +324,11 @@ class SectionViewPage extends React.Component {
         </Helmet>
         <div className="section-view-page">
           {this.renderSummary()}
+          {toggleChildCategories &&
           <SubCategoriesView categories={childCategories}
                              current={selectedChildCat}
                              onChange={this.onChildCategoryChange}/>
+          }
           {this.renderSections()}
           <ConfirmModal id={CONFIRM_MODAL_ID} onConfirm={this.onModalConfirm}/>
         </div>
@@ -326,6 +342,7 @@ const mapDispatchToProps = (dispatch) => ({
   loadCategories: (payload) => dispatch(loadCategories(payload)),
   loadChildCategories: (payload) => dispatch(loadChildCategories(payload)),
   loadSections: (payload) => dispatch(loadSections(payload)),
+  toggleSection: () => dispatch(toggleSection()),
   resetSections: (payload) => dispatch(resetSections(payload)),
   deleteSection: (payload) => dispatch(deleteSection(payload)),
   cancelExam: () => dispatch(cancelExam()),
@@ -334,6 +351,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = createStructuredSelector({
+  toggleChildCategories: makeSelectToggleChildCategories(),
   categories: makeSelectCategories(),
   childCategories: makeSelectChildCategories(),
   sections: makeSelectSections(),

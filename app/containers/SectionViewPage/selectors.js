@@ -37,6 +37,10 @@ const makeSelectExam = () => createSelector(
   selectGlobal,
   (globalState) => globalState.exam
 );
+const makeSelectToggleChildCategories = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.toggleChildCategories
+);
 
 
 export {
@@ -48,5 +52,6 @@ export {
   makeSelectSelectedCat,
   makeSelectSelectedChildCat,
   makeSelectExam,
+  makeSelectToggleChildCategories,
   makeSelectChildCategories
 };

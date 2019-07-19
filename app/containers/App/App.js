@@ -9,8 +9,9 @@ import SectionAddPage from 'containers/SectionAddPage/Loadable';
 import QuestionAddPage from 'containers/QuestionAddPage/Loadable';
 import QuestionViewPage from 'containers/QuestionViewPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
-import ExamViewPage from 'containers/ExamViewPage/Loadable';
 import ExamResultViewPage from 'containers/ExamResultViewPage/Loadable';
+import ExamPreviewViewPage from 'containers/ExamPreviewViewPage/Loadable';
+import ExamResultListViewPage from 'containers/ExamResultListViewPage/Loadable';
 import ExamReportViewPage from 'containers/ExamReportViewPage/Loadable';
 import {ToastsContainer, ToastsContainerPosition, ToastsStore} from 'react-toasts';
 
@@ -22,7 +23,7 @@ import {
   SECTION_R,
   EXAM_PREVIEW,
   REPORT,
-  EXAM_RESULTS, EXAM_VIEW, CATEGORY
+  EXAM_RESULTS, CATEGORY
 } from '../../constants/routers';
 
 const App = () => (
@@ -47,11 +48,11 @@ const App = () => (
       <Route exact path={`${QUESTIONS_VIEW}/:id`} component={QuestionViewPage}/>
       <Route exact path={`${QUESTIONS_VIEW}/:id/:catId/:childCatId`} component={QuestionViewPage}/>
 
-      <Route exact path={EXAM_PREVIEW} component={ExamViewPage}/>
-      <Route exact path={`${EXAM_PREVIEW}/:catId`} component={ExamViewPage}/>
-      <Route exact path={`${EXAM_VIEW}/:exam`} component={ExamViewPage}/>
+      <Route exact path={EXAM_PREVIEW} component={ExamPreviewViewPage}/>
+      <Route exact path={`${EXAM_PREVIEW}/:catId`} component={ExamPreviewViewPage}/>
+      <Route exact path={`${EXAM_RESULTS}/:examId`} component={ExamResultViewPage}/>
 
-      <Route exact path={`${EXAM_RESULTS}`} component={ExamResultViewPage}/>
+      <Route exact path={`${EXAM_RESULTS}`} component={ExamResultListViewPage}/>
       <Route exact path={REPORT} component={ExamReportViewPage}/>
       <Route path="" component={NotFoundPage}/>
     </Switch>

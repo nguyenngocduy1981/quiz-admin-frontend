@@ -3,7 +3,7 @@ import './style.scss';
 import {
   QUES_ACTION,
   PASSAGE_OPTION,
-  ABC_ANS
+  ABC_ANS, PASSAGE_TEXT
 } from "../../constants/questions";
 
 
@@ -12,9 +12,9 @@ class PassageAnswerView extends React.Component {
     super(props);
   }
 
-  renderPassageOption = (pos, idx) => {
+  renderPassageOption = (pos, idx, ques) => {
     return (
-      <span key={idx} className={'pos-an'}>{ABC_ANS[idx]}. {pos}</span>
+      <span key={idx} className={`pos-an ${ques.answer === pos ? 'answered' : ''}`}>{ABC_ANS[idx]}. {pos}</span>
     );
   }
 
@@ -45,7 +45,7 @@ class PassageAnswerView extends React.Component {
         <div className={'row q-row'}>
           <div className={`col-md-12 ${inExam ? 'selected-q' : ''}`}>
             <b>{idx} - </b>
-            {possibleAnswers.map(this.renderPassageOption)}
+            {possibleAnswers.map((p, idxx) => this.renderPassageOption(p, idxx, ques))}
             {this.renderActions()}
           </div>
         </div>
@@ -54,7 +54,7 @@ class PassageAnswerView extends React.Component {
   }
 
   render() {
-    const {section, ques, idx, inExam} = this.props;
+    const {section, ques, inExam} = this.props;
     const type = section.questionType;
 
     if (type === PASSAGE_OPTION) return this.renderPASSAGE_OPTION();
@@ -63,11 +63,12 @@ class PassageAnswerView extends React.Component {
       <div className={`q-container ${ques.error ? 'q-error' : ''}`}>
         <div className={'row q-row'}>
           <div className={'col-md-12'}>
-            <h4 className={`${inExam ? 'selected-q' : ''}`}>
-              {ques.text}
+            <span className={`${inExam ? 'selected-q' : ''}`}>
+              <span>{ques.text})</span>
+              {type !== PASSAGE_TEXT && <span className={'an'}>{ques.answer}</span>}
               {this.renderActions()}
-            </h4>
-            <div className={'an'}>{ques.answer}</div>
+            </span>
+            {type === PASSAGE_TEXT && <div className={'an'}>{ques.answer}</div>}
           </div>
         </div>
       </div>

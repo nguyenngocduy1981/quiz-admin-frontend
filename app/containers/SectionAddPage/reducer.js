@@ -77,7 +77,6 @@ function sectionAddReducer(state = initialState, action) {
     }
 
     case LOAD_CATEGORY_SUCCESS: {
-    console.log('LOAD_CATEGORY_SUCCESS: ', action);
       const newState = {
         ...state,
         loading: false,
@@ -104,7 +103,6 @@ function sectionAddReducer(state = initialState, action) {
       return {...state, sections};
     }
     case TEMP_SAVE_SECTION: {
-      console.log('save tem: ', action.payload);
       const sec = action.payload;
       const sections = toSections(state);
       const oldSec = _.find(sections, ['id', sec.id]);

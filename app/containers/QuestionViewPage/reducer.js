@@ -13,6 +13,8 @@ export const initialState = {
   loading: false,
   error: false,
   questions: false,
+  pageCount: false,
+  currentPage: 1,
   section: false,
   passage: false,
   exam: {}
@@ -38,22 +40,26 @@ function viewQuestionInSectionReducer(state = initialState, action) {
       return {...state, exam: addExam(action.payload)};
     }
     case GET_QUESTIONS: {
+      const {page} = action.payload;
       const newState = {
         ...state,
         loading: true,
+        currentPage: page,
         error: false
       };
 
       return newState;
     }
     case GET_QUESTIONS_SUCCESS: {
-      const {section, passage, questions} = action.payload;
+      const {data, pageCount} = action.payload;
+      const {section, passage, questions} = data;
       const newState = {
         ...state,
         loading: false,
         section,
         passage,
-        questions
+        questions,
+        pageCount
       };
       return newState;
     }

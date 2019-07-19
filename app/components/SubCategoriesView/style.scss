@@ -1,10 +1,12 @@
-.hehehe {
-  span {
-    margin-left: 15px;
-    border: 1px solid grey;
-  }
+.active {
+  color: #41ADDD;
 }
 
-.active {
-  color: red;
+.item {
+  border: 1px solid transparent;
+
+  &:hover {
+    border: 1px solid #41ADDD;
+    cursor: pointer;
+  }
 }

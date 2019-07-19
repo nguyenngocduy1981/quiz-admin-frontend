@@ -1,0 +1,24 @@
+.exam-result-view-page {
+  .exams {
+    max-width: 1300px;
+    margin: 0 auto;
+    overflow: auto;
+  }
+
+  .item {
+    min-width: 190px;
+    float: left;
+    margin-left: 15px;
+    margin-top: 15px;
+    border: 1px solid #41ADDD;
+    color: #41ADDD;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+
+    &:active {
+      background: #41ADDD;
+      color: #FFF;
+    }
+  }
+}

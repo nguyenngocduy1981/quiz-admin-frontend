@@ -9,7 +9,7 @@ import {
   makeSelectError,
   makeSelectExam,
 } from './selectors';
-import {cancelExam, createExam, goHome, loadExamPreview, viewExamResult} from './actions';
+import {cancelExam, createExam, goHome, loadExamPreview} from './actions';
 import saga from './saga';
 
 import './style.scss';
@@ -32,11 +32,10 @@ const _ = require('lodash');
 const $ = require('jquery');
 const INPUT_MODAL_ID = 'title_input';
 
-class ExamViewPage extends React.Component {
+class ExamPreviewViewPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isPreview: true,
       modalShown: false,
       sectionId: 0,
       flag: {}
@@ -45,15 +44,7 @@ class ExamViewPage extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.escFunction, false);
-
-    const {exam} = this.props.match.params;
-    if (exam) {
-      this.setState({isPreview: false}, () => {
-        this.props.viewExamResult(exam);
-      });
-    } else {
-      this.props.loadExamPreview();
-    }
+    this.props.loadExamPreview();
   }
 
   componentWillUnmount() {
@@ -72,10 +63,10 @@ class ExamViewPage extends React.Component {
 
   renderQuestion = (q, idx) => {
     if (QUESTION_TEXT_TYPES.includes(q.type)) {
-      return (<TextAnswerViewOnly key={idx} idx={idx + 1} ques={q}/>);
+      return (<TextAnswerViewOnly key={idx} idx={idx + 1} ques={q} preview />);
     }
 
-    return (<PossibleAnswerViewOnly key={idx} idx={idx + 1} ques={q}/>);
+    return (<PossibleAnswerViewOnly key={idx} idx={idx + 1} ques={q} preview/>);
   }
 
   cancelExam = () => {
@@ -146,22 +137,16 @@ class ExamViewPage extends React.Component {
     const len = exam.length === 0 ? 0 :
       exam.map(a => a.questions.length).reduce((a, b) => a + b);
 
-    const {isPreview} = this.state;
-
     return (
       <div className={'row q-container'}>
         <div className={'col-sm-12 col-md-12 col-lg-12 summary'}>
           <h5 className={'p-t-5'}>
             <span className={'btn m-r-10'} onClick={this.goHome}>&lt;&lt;</span>
-            {isPreview &&
             <span className={'btn'} onClick={this.cancelExam}>{LINKS.cancel_exam}</span>
-            }
-            {isPreview &&
             <span className={'btn'} onClick={this.createExam}>
               {LINKS.create_exam}
               <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len}</span>
             </span>
-            }
           </h5>
         </div>
       </div>
@@ -214,7 +199,7 @@ class ExamViewPage extends React.Component {
     return (
       <article>
         <Helmet>
-          <title>ExamViewPage</title>
+          <title>ExamPreviewViewPage</title>
         </Helmet>
         <div className="exam-view-page">
           {this.renderSummary()}
@@ -231,7 +216,6 @@ const
   mapDispatchToProps = (dispatch) => ({
     loadExamPreview: () => dispatch(loadExamPreview()),
     cancelExam: () => dispatch(cancelExam()),
-    viewExamResult: (payload) => dispatch(viewExamResult(payload)),
     createExam: (payload) => dispatch(createExam(payload)),
     goHome: (payload) => dispatch(goHome(payload)),
   });
@@ -255,4 +239,4 @@ const
 export default compose(
   withSaga,
   withConnect,
-)(ExamViewPage);
+)(ExamPreviewViewPage);

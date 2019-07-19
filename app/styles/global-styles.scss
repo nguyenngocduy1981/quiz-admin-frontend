@@ -158,6 +158,7 @@ a {
   &:hover {
     color: red !important;
   }
+
   i {
     font-size: 20px;
   }
@@ -243,9 +244,11 @@ a:hover {
   left: 0;
   top: 0;
   padding: 5px 0;
+
   &:hover {
     color: #41ADDD;
   }
+
   &:active {
     background: #41ADDD;
     color: #FFF;
@@ -263,6 +266,7 @@ a:hover {
   &:hover {
     color: #41ADDD;
   }
+
   &:active {
     background: #41ADDD;
     color: #FFF;
@@ -272,9 +276,11 @@ a:hover {
     color: red;
   }
 }
+
 .checked {
   color: #41ADDD !important;
 }
+
 .selected-q {
   background: #41ADDD;
 }
@@ -295,12 +301,42 @@ a:hover {
   text-align: center;
 
 }
+
 .check-color {
   color: red;
 }
 
 .error-list {
   list-style: none;
-  padding:0;
+  padding: 0;
   text-align: left;
+}
+
+.ques {
+  cursor: pointer;
+  &:hover {
+    background: #ced4da;
+  }
+}
+.tick {
+  color: #41ADDD;
+  margin-left: 5px;
+}
+.incorrect {
+  color: red;
+  margin-left: 5px;
+}
+.exam-view-result {
+  b {
+    text-transform: capitalize;
+    margin-left: 15px;
+  }
+}
+
+.correct {
+  color: #41ADDD;
+}
+.wrong{
+  color: red;
+  text-decoration: line-through;
 }

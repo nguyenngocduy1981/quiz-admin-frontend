@@ -1,11 +1,17 @@
 import React from 'react';
 import './style.scss';
 
+const noOfItemInPage = 10;
+
 class SubCategoriesView extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+    }
   }
 
+  componentDidMount() {
+  }
   onChange = id => evt => {
     this.props.onChange(id);
   }
@@ -17,9 +23,9 @@ class SubCategoriesView extends React.Component {
   renderCategory = (c, idx) => {
     const {current} = this.props;
     return (
-      <span key={idx}
-            className={`${this.isActive(current, c.id) ? 'active' : ''}`}
-            onClick={this.onChange(c.id)}>{c.catName}</span>
+      <div key={idx}
+            className={`item col-md-2 ${this.isActive(current, c.id) ? 'active' : ''}`}
+            onClick={this.onChange(c.id)}>{c.catName}</div>
     )
   }
 
@@ -28,7 +34,7 @@ class SubCategoriesView extends React.Component {
     if (!categories) return '';
 
     return (
-      <div className={'row hehehe'}>
+      <div className={'row'}>
         {categories.map(this.renderCategory)}
       </div>
     );

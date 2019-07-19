@@ -2,17 +2,18 @@
  * Combine all reducers in this file and export the combined reducers.
  */
 
-import { combineReducers } from 'redux';
-import { connectRouter } from 'connected-react-router';
+import {combineReducers} from 'redux';
+import {connectRouter} from 'connected-react-router';
 
 import history from 'utils/history';
 import sectionViewReducer from 'containers/SectionViewPage/reducer';
 import sectionAddReducer from 'containers/SectionAddPage/reducer';
 import addQuestionReducer from 'containers/QuestionAddPage/reducer';
 import viewQuestionInSectionReducer from 'containers/QuestionViewPage/reducer';
-import examPreviewReducer from 'containers/ExamViewPage/reducer';
+import examPreviewReducer from 'containers/ExamPreviewViewPage/reducer';
 import examsReportReducer from 'containers/ExamReportViewPage/reducer';
-import examsResultReducer from 'containers/ExamResultViewPage/reducer';
+import examResultReducer from 'containers/ExamResultViewPage/reducer';
+import examsResultReducer from 'containers/ExamResultListViewPage/reducer';
 import categoryViewReducer from 'containers/CategoryViewPage/reducer';
 
 /**
@@ -28,6 +29,7 @@ export default function createReducer(injectedReducers = {}) {
     examPreview: examPreviewReducer,
     examsReport: examsReportReducer,
     examsResult: examsResultReducer,
+    examResult: examResultReducer,
     router: connectRouter(history),
     ...injectedReducers,
   });

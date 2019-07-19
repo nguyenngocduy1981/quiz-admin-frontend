@@ -35,19 +35,6 @@ export function* goHome(req) {
   }
 }
 
-export function* viewExam(payload) {
-  try {
-    const {id} = payload;
-
-    const url = EXAM.replace('{id}', id)
-    const res = yield call(request, url);
-    const {questions} = res.data;
-    yield put(viewExamSuccess(JSON.parse(questions)));
-  } catch (err) {
-    yield put(requestError());
-  }
-}
-
 export function* fetchExam() {
   try {
     const res = yield call(request, PREVIEW_EXAM, post(getExam()));
@@ -87,7 +74,6 @@ export function* generateExam(payload) {
  * Root saga manages watcher lifecycle
  */
 export default function* questionsData() {
-  yield takeLatest(LOAD_EXAM_BY_ID, viewExam);
   yield takeLatest(LOAD_EXAM_PREVIEW, fetchExam);
   yield takeLatest(CREATE_EXAM, generateExam);
   yield takeLatest(CANCEL_EXAM, cancelExam);
