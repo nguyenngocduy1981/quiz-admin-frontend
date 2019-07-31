@@ -11,6 +11,7 @@
   "scripts": {
     "prebuild": "npm run build:clean",
     "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.babel.js --color -p --progress --hide-modules --display-optimization-bailout",
+    "dev": "webpack --env dev --progress --profile --colors",
     "build:clean": "rimraf ./build",
     "clean": "npm run test:clean && npm run build:clean",
     "eslint:fix": "eslint -- . --ignore-path .gitignore --fix",
@@ -43,6 +44,7 @@
     "jquery": "^3.4.1",
     "lodash": "4.17.11",
     "minimist": "1.2.0",
+    "popper.js": "^1.15.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

@@ -6,7 +6,6 @@
  */
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.min.css';
-import 'toasted-notes/src/styles.css';
 // Needed for redux-saga es6 generator support
 import '@babel/polyfill';
 
