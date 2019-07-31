@@ -1,4 +1,4 @@
-export const ROOT = 'http://localhost:8080/api/v1';
+export const ROOT = 'http://108.59.85.23/api/v1';
 
 export const CATEGORIES = `${ROOT}/categories`;
 export const CHILD_CATEGORY = `${ROOT}/categories/child`;

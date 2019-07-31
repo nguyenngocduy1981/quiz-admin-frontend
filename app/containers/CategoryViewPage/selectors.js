@@ -7,6 +7,10 @@ const makeSelectLoading = () => createSelector(
   selectGlobal,
   (globalState) => globalState.loading
 );
+const makeSelectChildLoading = () => createSelector(
+  selectGlobal,
+  (globalState) => globalState.childLoading
+);
 
 const makeSelectError = () => createSelector(
   selectGlobal,
@@ -35,6 +39,7 @@ const makeSelectNewCatName = () => createSelector(
 export {
   selectGlobal,
   makeSelectLoading,
+  makeSelectChildLoading,
   makeSelectError,
   makeSelectCategories,
   makeSelectSelectedCat,

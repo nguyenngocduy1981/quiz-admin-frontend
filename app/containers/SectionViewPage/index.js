@@ -60,17 +60,11 @@ class SectionViewPage extends React.Component {
     $(`#${ACTIONS_ID}`).hide();
 
     const {catId, childCatId} = this.props.match.params;
-    // if (catId) {
-    //   this.loadSections(catId);
-    // } else {
-
-    // }
 
     if (catId && childCatId) {
       const payload = {parentId: catId, childId: childCatId};
       this.props.loadCategories(payload);
     } else {
-      // this.props.resetSections();
       this.props.loadCategories();
     }
     this.props.loadExamFromLocalStorage();
@@ -279,18 +273,21 @@ class SectionViewPage extends React.Component {
     )
   }
   renderSummary = () => {
+    const {categories} = this.props;
     return (
       <div className={'summary'}>
         <div className={'col-8 col-sm-6 col-md-6 col-lg-7 summary'}>
           <h5 className={'p-t-5'}>
             <span className={'btn'} onClick={this.props.goHome}>&lt;&lt;</span>
           </h5>
+          {categories &&
           <h5 className={'p-t-5'}>
             {this.renderCategories()}
             <span className={'btn'}
                   onClick={this.toggleChildren}
             >Ẩn/Hiện</span>
           </h5>
+          }
         </div>
         <div className={'col-4 col-sm-6 col-md-6 col-lg-5  actions'}>
           <span className="main btn" onClick={this.toggleActions}>

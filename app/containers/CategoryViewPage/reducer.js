@@ -10,6 +10,7 @@ const _ = require('lodash');
 // The initial state of the App
 export const initialState = {
   loading: false,
+  childLoading: false,
   error: false,
   childCategories: false,
   selectedCat: false,
@@ -24,6 +25,7 @@ function categoryViewReducer(state = initialState, action) {
     case LOAD_CATEGORIES: {
       const newState = {
         ...state,
+        loading: true,
         categories: false,
         childCategories: false,
         selectedCat: action.id
@@ -31,13 +33,13 @@ function categoryViewReducer(state = initialState, action) {
       return newState;
     }
     case LOAD_CATEGORIES_SUCCESS: {
-      return {...state, categories: action.payload};
+      return {...state, loading: false, categories: action.payload};
     }
     case LOAD_CHILD_CATEGORIES: {
-      return {...state, childCategories: false, selectedCat: action.id};
+      return {...state, childLoading: true, childCategories: false, selectedCat: action.id};
     }
     case LOAD_CHILD_CATEGORIES_SUCCESS: {
-      return {...state, childCategories: action.payload};
+      return {...state, childLoading: false, childCategories: action.payload};
     }
     case SAVE_NEW_CHILD_SUCCESS: {
       return {...state, newCatName: ''};

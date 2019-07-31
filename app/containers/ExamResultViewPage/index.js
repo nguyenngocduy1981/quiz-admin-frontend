@@ -151,12 +151,20 @@ class ExamResultViewPage extends React.Component {
     const len = exam.length === 0 ? 0 :
       exam.map(a => a.questions.length).reduce((a, b) => a + b);
 
+    let correctCount = 0;
+    let total = 0;
+    for (let e of exam) {
+      total += e.questions.length;
+      correctCount += e.questions.filter(q => q.correct).length;
+    }
+    const percent = (correctCount * 100 / total).toFixed(0);
     return (
       <div className={'row q-container'}>
         <div className={'col-sm-12 col-md-12 col-lg-12 summary'}>
           <h5 className={'p-t-5'}>
             <span className={'btn m-r-10'} onClick={this.goHome}>&lt;&lt;</span>
             <span className={'btn m-r-10'} onClick={this.storeResult}>{LINKS.luu_ketqua}</span>
+            <span className={'rs m-r-10'}>{LINKS.exam_result}: {correctCount}/{total}={percent}%</span>
           </h5>
         </div>
       </div>

@@ -5,7 +5,12 @@ import {createStructuredSelector} from 'reselect';
 import injectSaga from 'utils/injectSaga';
 import {
   makeSelectLoading,
-  makeSelectError, makeSelectCategories, makeSelectSelectedCat, makeSelectChildCategories, makeSelectNewCatName
+  makeSelectError,
+  makeSelectCategories,
+  makeSelectSelectedCat,
+  makeSelectChildCategories,
+  makeSelectNewCatName,
+  makeSelectChildLoading
 } from './selectors';
 import {
   goHome, loadCategories, loadChildCategories, saveNewChild, saveTempNewCategory
@@ -14,17 +19,11 @@ import saga from './saga';
 
 import './style.scss';
 import {Helmet} from 'react-helmet';
-import {
-  CONFIRM_ACTION, ENTER_KEY, LINKS, VELOCITY
-} from '../../constants/questions';
-import ConfirmModal from '../../components/ConfirmModal';
+import {ENTER_KEY, LINKS} from '../../constants/questions';
 import {Link} from 'react-router-dom';
 import {SECTION_R} from '../../constants/routers';
-
-const _ = require('lodash');
-const $ = require('jquery');
-
-const CONFIRM_MODAL_ID = 'confirmModal';
+import Error from "../SectionViewPage";
+import LoadingIndicator from "../../components/LoadingIndicator";
 
 class CategoryViewPage extends React.Component {
   constructor(props) {
@@ -96,7 +95,14 @@ class CategoryViewPage extends React.Component {
   }
 
   renderChildCategories = () => {
-    const {childCategories} = this.props;
+    const {childCategories, childLoading, error} = this.props;
+    if (childLoading) {
+      return <LoadingIndicator/>;
+    }
+    if (error) {
+      return <Error/>;
+    }
+
     if (!childCategories) return '';
 
     return (
@@ -128,7 +134,15 @@ class CategoryViewPage extends React.Component {
   )
 
   render() {
-    const {newCatName} = this.props;
+    const {newCatName, loading, error} = this.props;
+
+    if (loading) {
+      return <LoadingIndicator/>;
+    }
+    if (error) {
+      return <Error/>;
+    }
+
     return (
       <article>
         <Helmet>
@@ -173,6 +187,7 @@ const mapStateToProps = createStructuredSelector({
   selectedCat: makeSelectSelectedCat(),
   newCatName: makeSelectNewCatName(),
   loading: makeSelectLoading(),
+  childLoading: makeSelectChildLoading(),
   error: makeSelectError(),
 });
 

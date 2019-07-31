@@ -46,7 +46,7 @@ function sectionViewReducer(state = initialState, action) {
       return {...state, exam: {}};
     }
     case LOAD_CATEGORIES: {
-      let st = {...state, categories: false};
+      let st = {...state, categories: false, loading: true};
       if (!action.payload) {
         st.childCategories = false;
         st.sections = false;
@@ -56,21 +56,21 @@ function sectionViewReducer(state = initialState, action) {
       return st;
     }
     case LOAD_CATEGORIES_SUCCESS: {
-      return {...state, categories: action.payload};
+      return {...state, categories: action.payload, loading: false};
     }
     case LOAD_CHILD_CATEGORIES: {
       const newState = {
         ...state,
+        loading: true,
         childCategories: false,
         sections: false,
         selectedChildCat: false,
-        selectedCat: action.payload.parentId,
-        toggleChildCategories: true
+        selectedCat: action.payload.parentId
       };
       return newState;
     }
     case LOAD_CHILD_CATEGORIES_SUCCESS: {
-      return {...state, childCategories: action.payload};
+      return {...state, childCategories: action.payload, loading: false};
     }
     case LOAD_SECTIONS: {
       const {parentId, childId} = action.payload;
