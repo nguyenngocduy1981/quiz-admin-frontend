@@ -13,14 +13,14 @@ import {
 import {
   CATEGORIES,
 } from '../../constants/service-model';
-import {CATEGORY} from "../../constants/routers";
+import {ADMIN_HOME, CATEGORY} from "../../constants/routers";
 import {post} from "../../utils/request-method";
 import notify from "../../utils/notify";
 
 const _ = require('lodash');
 
 export function* goHome() {
-  yield put(push('/'));
+  yield put(push(ADMIN_HOME));
 }
 
 export function* fetchCategories() {
@@ -53,7 +53,7 @@ export function* saveNewChild(pl) {
     } else {
       yield put(saveNewChildSuccess(res.data));
       yield put(loadChildCategories(id));
-      yield put(push(`${CATEGORY}/${id}`));
+      // yield put(push(`${CATEGORY}/${id}`));
     }
   } catch (err) {
     yield put(requestError());

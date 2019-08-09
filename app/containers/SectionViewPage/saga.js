@@ -22,14 +22,14 @@ import {del, post} from '../../utils/request-method';
 import notify from '../../utils/notify';
 
 import {getExam} from '../../utils/local-storage';
-import {CATEGORY, SECTION_NEW_R, SECTION_R} from '../../constants/routers';
+import {ADMIN_HOME, CATEGORY, SECTION_NEW_R, SECTION_R} from '../../constants/routers';
 import FileSaver from 'file-saver';
 
 
 const _ = require('lodash');
 
 export function* goHome() {
-  yield put(push('/'));
+  yield put(push(ADMIN_HOME));
 }
 
 

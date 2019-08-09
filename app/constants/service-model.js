@@ -1,4 +1,5 @@
-export const ROOT = 'http://108.59.85.23/api/v1';
+// export const ROOT = 'http://108.59.85.23/api/v1';
+export const ROOT = 'http://localhost:8080/api/v1';
 
 export const CATEGORIES = `${ROOT}/categories`;
 export const CHILD_CATEGORY = `${ROOT}/categories/child`;
@@ -19,3 +20,8 @@ export const QUESTIONS_BULK = `${ROOT}/questions/bulk`;
 export const REPORTS = `${ROOT}/reports`;
 export const REPORTS_PDF = `${ROOT}/reports/pdf`;
 export const REPORTS_JSON = `${ROOT}/reports/json`;
+export const LOGIN_URL = `${ROOT}/authentication`;
+//
+// export const GET_EXAM_LIST = `${ROOT}/list`;
+// export const GET_EXAM = `${ROOT}/{exam}`;
+// export const POST_EXAM = `${ROOT}/{exam}`;

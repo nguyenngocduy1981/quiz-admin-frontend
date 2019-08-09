@@ -1,3 +1,20 @@
+export function saveLogin(data) {
+  localStorage.setItem('login', JSON.stringify(data));
+}
+
+export function getLogin() {
+  const data = localStorage.getItem('login');
+  if(!data) return null;
+
+  return JSON.parse(data);
+}
+export function getLoginRole() {
+  const data = localStorage.getItem('login');
+  if(!data) return '';
+
+  return JSON.parse(data).role;
+}
+
 export function countQuesInExam() {
   let exam = localStorage.getItem('exam');
   if (exam) {
@@ -62,14 +79,26 @@ export function addExam(payload) {
   return exam;
 }
 
-export function getExamPreview() {
-  const exam = localStorage.getItem('exam-preview');
-  if (exam) {
-    return JSON.parse(exam);
-  }
-  return {};
+export function saveCurrentExamName(name) {
+  localStorage.setItem('current_exam', name);
 }
 
-export function saveExamPreview(exams) {
-  localStorage.setItem('exam-preview', JSON.stringify(exams));
+export function getCurrentExamName() {
+  return localStorage.getItem('current_exam');
+}
+
+export function getExamResult() {
+  return JSON.parse(localStorage.getItem('exam_result'));
+}
+
+export function resetExam() {
+  const examRs = localStorage.getItem('exam');
+  localStorage.setItem('exam_result', examRs);
+  localStorage.removeItem('current_exam');
+  localStorage.removeItem('exam');
+
+}
+
+export function saveExam(questions) {
+  localStorage.setItem('exam', JSON.stringify(questions));
 }

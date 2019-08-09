@@ -9,7 +9,7 @@ import {
   requestError, UPLOAD_EXAM, loadExams,
 } from './actions';
 import {EXAMS, UPLOAD_EXAM_RESULT} from '../../constants/service-model';
-import {SECTION_R} from "../../constants/routers";
+import {ADMIN_HOME, SECTION_R} from "../../constants/routers";
 import request from '../../utils/request';
 import {upload} from '../../utils/request-method';
 import notify from "../../utils/notify";
@@ -24,7 +24,7 @@ export function* goHome(payload) {
   //   yield put(push(SECTION_R));
   // }
 
-  yield put(push('/'));
+  yield put(push(ADMIN_HOME));
 }
 
 export function* uploadExam(payload) {

@@ -1,4 +1,5 @@
 import 'whatwg-fetch';
+import {getLogin} from "./local-storage";
 
 /**
  * Parses the JSON returned by a network request
@@ -40,7 +41,22 @@ export function checkStatus(response) {
  * @return {object}           The response data
  */
 export default function request(url, options) {
+  const json = getLogin();
+  if (json) {
+    if (options) {
+      const {headers} = options;
+      if (headers) {
+        const Authorization = `Bearer ${json.token}`;
+        options.headers = Object.assign({}, headers, {Authorization});
+      } else {
+        options.headers = {Authorization: `Bearer ${json.token}`};
+      }
+    } else {
+      options = {headers: {Authorization: `Bearer ${json.token}`}};
+    }
+  }
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON);
+
 }

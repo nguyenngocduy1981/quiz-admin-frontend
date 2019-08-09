@@ -33,6 +33,7 @@ export const LINKS = {
   report: 'Report',
   exam_result: 'Kết quả',
   upload_result: 'Upload kết quả',
+  login: 'Đăng nhập',
 }
 export const PLACE_HOLDER = {
   sec: 'loại câu hỏi',
@@ -46,6 +47,9 @@ export const PLACE_HOLDER = {
   ans_b: 'đáp án B',
   ans_c: 'đáp án C',
   ans_d: 'đáp án D',
+  need_take: 'Làm bài thi thôi',
+  token: 'Bài thi đã được làm rồi',
+  approve: 'Bài thi đã được duyệt, vào xem điểm thi',
 }
 export const ERROR_MSG = {
   ERR_MANDATORY: '<ul class="error-list"><li>Thông tin chưa nhập đủ</li><li>Đáp án trùng nhau</li><li>Câu hỏi lựa chọn chưa có đáp án</li></ul>',

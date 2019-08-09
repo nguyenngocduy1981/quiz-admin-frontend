@@ -11,10 +11,7 @@ import getId from '../../utils/datetime';
 import {
   ERROR_MSG,
   QUESTION_TEXT_TYPES,
-  QUESTION_OPTION_TYPES,
-  PASSAGE_TYPES,
-  PASSAGE_TEXT,
-  PASSAGE_OPTION_FROM_GIVEN
+  QUESTION_OPTION_TYPES
 } from '../../constants/questions';
 import {
   isEmptyQuestions,

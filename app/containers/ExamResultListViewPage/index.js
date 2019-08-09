@@ -128,7 +128,7 @@ class ExamResultListViewPage extends React.Component {
     return (
       <article>
         <Helmet>
-          <title>ExamResultViewPage</title>
+          <title>ExamResultListViewPage</title>
         </Helmet>
         <div className="exam-result-view-page">
           {this.renderSummary()}

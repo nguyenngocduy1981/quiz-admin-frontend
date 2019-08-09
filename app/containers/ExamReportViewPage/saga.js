@@ -10,7 +10,7 @@ import {
 } from './actions';
 import {REPORTS} from '../../constants/service-model';
 import request from '../../utils/request';
-import {SECTION_R} from "../../constants/routers";
+import {ADMIN_HOME, SECTION_R} from "../../constants/routers";
 const _ = require('lodash');
 
 export function* goHome(payload) {
@@ -21,7 +21,7 @@ export function* goHome(payload) {
   //   yield put(push(SECTION_R));
   // }
 
-  yield put(push('/'));
+  yield put(push(ADMIN_HOME));
 }
 
 export function* fetchExam() {

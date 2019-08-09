@@ -314,18 +314,22 @@ a:hover {
 
 .ques {
   cursor: pointer;
+
   &:hover {
     background: #ced4da;
   }
 }
+
 .tick {
   color: #41ADDD;
   margin-left: 5px;
 }
+
 .incorrect {
   color: red;
   margin-left: 5px;
 }
+
 .exam-view-result {
   b {
     text-transform: capitalize;
@@ -336,7 +340,16 @@ a:hover {
 .correct {
   color: #41ADDD;
 }
-.wrong{
+
+.wrong {
   color: red;
   text-decoration: line-through;
+}
+
+.token {
+  color: orange;
+}
+
+.approve {
+  color: #41ADDD;
 }

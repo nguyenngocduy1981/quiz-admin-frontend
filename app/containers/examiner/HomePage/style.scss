@@ -1,0 +1,20 @@
+.home-page-examiner {
+  display: flex;
+  flex-flow: row wrap;
+  //align-content: space-between;
+  section {
+    cursor: pointer;
+    margin: 10px auto;
+    border: 1px solid #41ADDD;
+    padding: 10px 5px;
+
+    &.centered {
+      text-align: center;
+    }
+  }
+
+  .current_exam {
+    text-decoration: underline;
+  }
+
+}
