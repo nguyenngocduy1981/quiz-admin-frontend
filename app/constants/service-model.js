@@ -1,4 +1,5 @@
 export const ROOT = 'http://35.202.4.202/api/v1';
+// const ROOT = `${process.env.API_URL || ''}/api/v1`
 // export const ROOT = 'http://localhost:8080/api/v1';
 
 export const CATEGORIES = `${ROOT}/categories`;

@@ -9,15 +9,13 @@ import injectSaga from "../../utils/injectSaga";
 import {login} from "./actions";
 import {makeSelectError, makeSelectLoading} from "./selectors";
 import saga from "./saga";
-import {CONFIRM_ACTION} from "../../constants/questions";
 
 class LoginPage extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      user: '',
-      loading: false
+      user: ''
     };
   }
 
