@@ -12,7 +12,7 @@ import {
   LOAD_SECTIONS,
   LOAD_CATEGORIES, loadCategoriesSuccess,
   loadedSections,
-  requestError, CREATE_EXAM, loadChildCategories,
+  requestError, CREATE_EXAM,
   LOAD_CHILD_CATEGORIES, loadChildCategoriesSuccess, loadSections
 } from './actions';
 import {
@@ -22,7 +22,7 @@ import {del, post} from '../../utils/request-method';
 import notify from '../../utils/notify';
 
 import {getExam} from '../../utils/local-storage';
-import {ADMIN_HOME, CATEGORY, SECTION_NEW_R, SECTION_R} from '../../constants/routers';
+import {ADMIN_HOME, SECTION_R} from '../../constants/routers';
 import FileSaver from 'file-saver';
 
 
@@ -57,7 +57,7 @@ export function* fetchSections(pl) {
     const payload = {parentId, childId, data: res.data};
     yield put(loadedSections(payload));
 
-    yield put(push(`${SECTION_R}/${parentId}/${childId}`));
+    yield put(push(`${SECTION_R}/${parentId}`));
   } catch (err) {
     yield put(requestError());
   }
@@ -66,10 +66,19 @@ export function* fetchSections(pl) {
 export function* fetchCategories(pl) {
   try {
     const res = yield call(request, CATEGORIES);
-    yield put(loadCategoriesSuccess(res.data));
+    const {data} = res;
+    yield put(loadCategoriesSuccess(data));
+
     if (pl.payload) {
       const {parentId, childId} = pl.payload;
-      yield put(loadChildCategories({parentId, childId, isNavigate: false}));
+
+      if (parentId) {
+        const {children} = data.find(c => c.id === parseInt(parentId, 0));
+        yield put(loadChildCategoriesSuccess(children));
+      }
+      if (childId) {
+        yield put(loadSections(pl.payload));
+      }
     }
   } catch (err) {
     yield put(requestError());
@@ -78,20 +87,8 @@ export function* fetchCategories(pl) {
 
 export function* fetchChildCategories(pl) {
   try {
-    const {parentId, childId, isNavigate} = pl.payload;
-    const res = yield call(request, `${CATEGORIES}/${parentId}`);
-    yield put(loadChildCategoriesSuccess(res.data));
-
-    if (isNavigate) {
-      if (childId) {
-        yield put(push(`${SECTION_R}/${parentId}/${childId}`));
-      } else {
-        yield put(push(`${SECTION_R}/${parentId}`));
-      }
-    } else if (childId) {
-      const payload = {parentId, childId};
-      yield put(loadSections(payload));
-    }
+    const {parentId} = pl.payload;
+    yield put(push(`${SECTION_R}/${parentId}`));
   } catch (err) {
     yield put(requestError());
   }

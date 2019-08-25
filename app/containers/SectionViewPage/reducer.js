@@ -46,23 +46,24 @@ function sectionViewReducer(state = initialState, action) {
       return {...state, exam: {}};
     }
     case LOAD_CATEGORIES: {
-      let st = {...state, categories: false, loading: true};
-      if (!action.payload) {
-        st.childCategories = false;
-        st.sections = false;
-        st.selectedCat = false;
-        st.selectedChildCat = false;
-      }
-      return st;
+      return {
+        ...state,
+        categories: false,
+        childCategories: false,
+        sections: false,
+        selectedCat: action.payload.parentId,
+        selectedChildCat: false,
+        loading: true
+      };
     }
     case LOAD_CATEGORIES_SUCCESS: {
       return {...state, categories: action.payload, loading: false};
     }
     case LOAD_CHILD_CATEGORIES: {
+      const {children} = state.categories.find(c => c.id === action.payload.parentId);
       const newState = {
         ...state,
-        loading: true,
-        childCategories: false,
+        childCategories: children,
         sections: false,
         selectedChildCat: false,
         selectedCat: action.payload.parentId

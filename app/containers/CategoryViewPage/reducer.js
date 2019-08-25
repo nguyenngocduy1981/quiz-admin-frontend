@@ -10,8 +10,8 @@ const _ = require('lodash');
 // The initial state of the App
 export const initialState = {
   loading: false,
-  childLoading: false,
   error: false,
+  categories: false,
   childCategories: false,
   selectedCat: false,
   newCatName: '',
@@ -36,10 +36,11 @@ function categoryViewReducer(state = initialState, action) {
       return {...state, loading: false, categories: action.payload};
     }
     case LOAD_CHILD_CATEGORIES: {
-      return {...state, childLoading: true, childCategories: false, selectedCat: action.id};
+      const childCategories = state.categories.find(c => c.id === parseInt(action.id, 0)).children;
+      return {...state, childCategories, selectedCat: action.id};
     }
     case LOAD_CHILD_CATEGORIES_SUCCESS: {
-      return {...state, childLoading: false, childCategories: action.payload};
+      return {...state, childCategories: action.payload};
     }
     case SAVE_NEW_CHILD_SUCCESS: {
       return {...state, newCatName: ''};

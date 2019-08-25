@@ -9,8 +9,7 @@ import {
   makeSelectCategories,
   makeSelectSelectedCat,
   makeSelectChildCategories,
-  makeSelectNewCatName,
-  makeSelectChildLoading
+  makeSelectNewCatName
 } from './selectors';
 import {
   goHome, loadCategories, loadChildCategories, saveNewChild, saveTempNewCategory
@@ -37,9 +36,6 @@ class CategoryViewPage extends React.Component {
     document.addEventListener('keydown', this.escFunction, false);
 
     const {id} = this.props.match.params;
-    if (id) {
-      this.props.loadChildCategories(id);
-    }
 
     this.props.loadCategories(id); // after load parent, load children as well
   }
@@ -95,13 +91,7 @@ class CategoryViewPage extends React.Component {
   }
 
   renderChildCategories = () => {
-    const {childCategories, childLoading, error} = this.props;
-    if (childLoading) {
-      return <LoadingIndicator/>;
-    }
-    if (error) {
-      return <Error/>;
-    }
+    const {childCategories} = this.props;
 
     if (!childCategories) return '';
 
@@ -187,7 +177,6 @@ const mapStateToProps = createStructuredSelector({
   selectedCat: makeSelectSelectedCat(),
   newCatName: makeSelectNewCatName(),
   loading: makeSelectLoading(),
-  childLoading: makeSelectChildLoading(),
   error: makeSelectError(),
 });
 

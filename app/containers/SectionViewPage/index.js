@@ -30,14 +30,16 @@ import saga from './saga';
 import './style.scss';
 import {Link} from 'react-router-dom';
 import {Helmet} from 'react-helmet';
-import {QUESTIONS_NEW, SECTION_NEW_R, QUESTIONS_VIEW, EXAM_PREVIEW} from '../../constants/routers';
+import {
+  QUESTIONS_NEW, SECTION_NEW_R, QUESTIONS_VIEW, EXAM_PREVIEW
+} from '../../constants/routers';
 import {CONFIRM_ACTION, LINKS, VELOCITY} from '../../constants/questions';
 import Error from '../../components/Error';
 import ConfirmModal from '../../components/ConfirmModal';
-import {countQuesInExam, getExam} from "../../utils/local-storage";
-import {defaultCatId} from "../SectionAddPage/constants";
-import NoData from "../../components/NoData";
-import SubCategoriesView from "../../components/SubCategoriesView";
+import {countQuesInExam} from '../../utils/local-storage';
+import {defaultCatId} from '../SectionAddPage/constants';
+import NoData from '../../components/NoData';
+import SubCategoriesView from '../../components/SubCategoriesView';
 
 const _ = require('lodash');
 const $ = require('jquery');
@@ -59,14 +61,10 @@ class SectionViewPage extends React.Component {
 
     $(`#${ACTIONS_ID}`).hide();
 
-    const {catId, childCatId} = this.props.match.params;
+    const {catId} = this.props.match.params;
+    const payload = {parentId: catId};
+    this.props.loadCategories(payload);
 
-    if (catId && childCatId) {
-      const payload = {parentId: catId, childId: childCatId};
-      this.props.loadCategories(payload);
-    } else {
-      this.props.loadCategories();
-    }
     this.props.loadExamFromLocalStorage();
   }
 
@@ -105,34 +103,44 @@ class SectionViewPage extends React.Component {
         </td>
         <td>{sec.questionType}</td>
         <td className={'action'}>
-        <span className={'q-remove-icon'} onClick={this.confirmDelete(sec.id)} title={LINKS.xoa_dm}>
-          <i className="fa fa-times hover" aria-hidden="true"></i>
-        </span>
-          {/*<Link className="router-link m-r-5" to={`${QUESTIONS_VIEW}/${sec.id}`} title={LINKS.chi_tiet_q}>*/}
-          {/*<i className="fa fa-bars" aria-hidden="true"></i>*/}
-          {/*</Link>*/}
-          <Link className="router-link m-r-5" to={`${QUESTIONS_VIEW}/${sec.id}/${catId}/${childCatId}`}
-                title={LINKS.chi_tiet_q}>
+          <span className={'q-remove-icon'} onClick={this.confirmDelete(sec.id)} title={LINKS.xoa_dm}>
+            <i className="fa fa-times hover" aria-hidden="true"></i>
+          </span>
+          {/* <Link className="router-link m-r-5" to={`${QUESTIONS_VIEW}/${sec.id}`} title={LINKS.chi_tiet_q}>*/}
+          {/* <i className="fa fa-bars" aria-hidden="true"></i>*/}
+          {/* </Link>*/}
+          <Link
+            className="router-link m-r-5"
+            to={`${QUESTIONS_VIEW}/${sec.id}/${catId}/${childCatId}`}
+            title={LINKS.chi_tiet_q}
+          >
             <i className="fa fa-bars" aria-hidden="true"></i>
           </Link>
-          <Link className="router-link m-l-5" to={`${QUESTIONS_NEW}/${sec.id}/${catId}/${childCatId}`}
-                title={LINKS.them_q}>
+          <Link
+            className="router-link m-l-5"
+            to={`${QUESTIONS_NEW}/${sec.id}/${catId}/${childCatId}`}
+            title={LINKS.them_q}
+          >
             <i className="fa fa-question-circle" aria-hidden="true"></i>
           </Link>
-          <span className={'m-l-10 m-r-10 badge badge-secondary'}
-                title={`${lenInExam} câu hỏi trong bài thi`}>{lenInExam}</span>
+          <span
+            className={'m-l-10 m-r-10 badge badge-secondary'}
+            title={`${lenInExam} câu hỏi trong bài thi`}
+          >{lenInExam}
+          </span>
         </td>
       </tr>
-    )
+    );
   }
 
-  isActive = (id, selectedCat) => {
-    return `${id}` === `${selectedCat}`;
-  }
+  isActive = (id, selectedCat) => `${id}` === `${selectedCat}`
 
   viewChildren = (id) => (evt) => {
-    const payload = {parentId: id, isNavigate: true}
-    this.props.loadChildCategories(payload);
+    const payload = {parentId: id};
+    const {catId} = this.props.match.params;
+    if (catId !== `${id}`) {
+      this.props.loadChildCategories(payload);
+    }
   }
 
   renderCategories = () => {
@@ -159,8 +167,8 @@ class SectionViewPage extends React.Component {
     $(`#${ACTIONS_ID}`).hide();
   }
 
-  toggleActions = evt => {
-    const actionShown = !this.state.actionShown
+  toggleActions = (evt) => {
+    const actionShown = !this.state.actionShown;
     this.setState({actionShown}, () => {
       if (actionShown) {
         $(`#${ACTIONS_ID}`).fadeIn('slow');
@@ -179,18 +187,21 @@ class SectionViewPage extends React.Component {
     this.props.createExam();
   }
 
-  showQuesInExamCount = () => {
-    return `${countQuesInExam()} câu hỏi trong bài thi`;
-  }
+  showQuesInExamCount = () => `${countQuesInExam()} câu hỏi trong bài thi`
 
   loadSections = (parentId, childId) => {
     const payload = {parentId, childId};
     this.props.loadSections(payload);
   }
-  onChildCategoryChange = id => {
+
+  onChildCategoryChange = (id) => {
     const {catId} = this.props.match.params;
-    this.loadSections(catId, id);
+    const {selectedChildCat} = this.props;
+    if (selectedChildCat !== id) {
+      this.loadSections(catId, id);
+    }
   }
+
   renderSections = () => {
     const {
       loading, error, sections,
@@ -221,17 +232,18 @@ class SectionViewPage extends React.Component {
     );
   }
 
-  toggleChildren = evt => {
+  toggleChildren = (evt) => {
     this.props.toggleSection();
   }
 
   renderFullActionList = () => {
 
   }
+
   renderActions = () => {
     const {exam} = this.props;
     const keys = Object.keys(exam);
-    const len = keys.length === 0 ? 0 : keys.map(k => exam[k].length).reduce((a, b) => a + b);
+    const len = keys.length === 0 ? 0 : keys.map((k) => exam[k].length).reduce((a, b) => a + b);
 
     // const catId = this.state.catId;
     let {catId, childCatId} = this.props.match.params;
@@ -240,38 +252,47 @@ class SectionViewPage extends React.Component {
       <div id={ACTIONS_ID}>
         {len > 0 && this.renderFullActionList()}
         <ul className="list-group">
-          {len > 0 &&
-          <li className="list-group-item">
-            {
-              catId === defaultCatId &&
-              <Link className="router-link" to={EXAM_PREVIEW}>{LINKS.preview_exam}</Link>
-            }
-            {
-              catId !== defaultCatId &&
-              <Link className="router-link" to={`${EXAM_PREVIEW}/${catId}`}>{LINKS.preview_exam}</Link>
-            }
-          </li>
+          {len > 0
+          && (
+            <li className="list-group-item">
+              {
+                catId === defaultCatId
+                && <Link className="router-link" to={EXAM_PREVIEW}>{LINKS.preview_exam}</Link>
+              }
+              {
+                catId !== defaultCatId
+                && <Link className="router-link" to={`${EXAM_PREVIEW}/${catId}`}>{LINKS.preview_exam}</Link>
+              }
+            </li>
+          )
           }
-          {len > 0 &&
-          <li className="list-group-item">
-            <span onClick={this.cancelExam}>{LINKS.cancel_exam}</span>
-          </li>
+          {len > 0
+          && (
+            <li className="list-group-item">
+              <span onClick={this.cancelExam}>{LINKS.cancel_exam}</span>
+            </li>
+          )
           }
-          {len > 0 &&
-          <li className="list-group-item">
-            <span onClick={this.createExam}>{LINKS.create_exam}</span>
-            <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len}</span>
-          </li>
+          {len > 0
+          && (
+            <li className="list-group-item">
+              <span onClick={this.createExam}>{LINKS.create_exam}</span>
+              <span className={'m-l-10 m-r-10 badge badge-secondary'}>{len}</span>
+            </li>
+          )
           }
-          {childCatId &&
-          <li className="list-group-item">
-            <Link className="router-link" to={`${SECTION_NEW_R}/${catId}/${childCatId}`}>{LINKS.them_sec}</Link>
-          </li>
+          {childCatId
+          && (
+            <li className="list-group-item">
+              <Link className="router-link" to={`${SECTION_NEW_R}/${catId}/${childCatId}`}>{LINKS.them_sec}</Link>
+            </li>
+          )
           }
         </ul>
       </div>
-    )
+    );
   }
+
   renderSummary = () => {
     const {categories} = this.props;
     return (
@@ -280,13 +301,17 @@ class SectionViewPage extends React.Component {
           <h5 className={'p-t-5'}>
             <span className={'btn'} onClick={this.props.goHome}>&lt;&lt;</span>
           </h5>
-          {categories &&
-          <h5 className={'p-t-5'}>
-            {this.renderCategories()}
-            <span className={'btn'}
-                  onClick={this.toggleChildren}
-            >Ẩn/Hiện</span>
-          </h5>
+          {categories
+          && (
+            <h5 className={'p-t-5'}>
+              {this.renderCategories()}
+              <span
+                className={'btn'}
+                onClick={this.toggleChildren}
+              >Ẩn/Hiện
+              </span>
+            </h5>
+          )
           }
         </div>
         <div className={'col-4 col-sm-6 col-md-6 col-lg-5  actions'}>
@@ -296,10 +321,10 @@ class SectionViewPage extends React.Component {
           {this.renderActions()}
         </div>
       </div>
-    )
+    );
   }
 
-  confirmDelete = sectionId4Delete => evt => {
+  confirmDelete = (sectionId4Delete) => (evt) => {
     this.setState({sectionId4Delete, actionShown: true}, () => {
       $(`#${CONFIRM_MODAL_ID}`).fadeIn(VELOCITY);
     });
@@ -321,10 +346,14 @@ class SectionViewPage extends React.Component {
         </Helmet>
         <div className="section-view-page">
           {this.renderSummary()}
-          {toggleChildCategories &&
-          <SubCategoriesView categories={childCategories}
-                             current={selectedChildCat}
-                             onChange={this.onChildCategoryChange}/>
+          {toggleChildCategories
+          && (
+            <SubCategoriesView
+              categories={childCategories}
+              current={selectedChildCat}
+              onChange={this.onChildCategoryChange}
+            />
+          )
           }
           {this.renderSections()}
           <ConfirmModal id={CONFIRM_MODAL_ID} onConfirm={this.onModalConfirm}/>

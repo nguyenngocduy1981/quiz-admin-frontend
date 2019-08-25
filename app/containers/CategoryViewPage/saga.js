@@ -23,10 +23,14 @@ export function* goHome() {
   yield put(push(ADMIN_HOME));
 }
 
-export function* fetchCategories() {
+export function* fetchCategories(pl) {
   try {
     const res = yield call(request, CATEGORIES);
     yield put(loadCategoriesSuccess(res.data));
+    if (pl.id) {
+      const {children} = res.data.find(c => c.id === parseInt(pl.id, 0));
+      yield put(loadChildCategoriesSuccess(children));
+    }
   } catch (err) {
     yield put(requestError());
   }
@@ -34,10 +38,7 @@ export function* fetchCategories() {
 
 export function* fetchChildCategories(pl) {
   try {
-    const id = pl.id;
-    const res = yield call(request, `${CATEGORIES}/${id}`);
-    yield put(loadChildCategoriesSuccess(res.data));
-    yield put(push(`${CATEGORY}/${id}`));
+    yield put(push(`${CATEGORY}/${pl.id}`));
   } catch (err) {
     yield put(requestError());
   }
@@ -53,7 +54,6 @@ export function* saveNewChild(pl) {
     } else {
       yield put(saveNewChildSuccess(res.data));
       yield put(loadChildCategories(id));
-      // yield put(push(`${CATEGORY}/${id}`));
     }
   } catch (err) {
     yield put(requestError());

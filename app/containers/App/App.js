@@ -63,7 +63,6 @@ const App = () => {
         <Route exact path={`${CATEGORY}/:id`} component={AdminRole(CategoryViewPage)} />
         <Route exact path={SECTION_R} component={AdminRole(SectionViewPage)} />
         <Route exact path={`${SECTION_R}/:catId/`} component={AdminRole(SectionViewPage)} />
-        <Route exact path={`${SECTION_R}/:catId/:childCatId`} component={AdminRole(SectionViewPage)} />
 
         <Route exact path={SECTION_NEW_R} component={AdminRole(SectionAddPage)} />
         <Route exact path={`${SECTION_NEW_R}/:catId`} component={AdminRole(SectionAddPage)} />
