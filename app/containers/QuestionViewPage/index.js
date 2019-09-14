@@ -18,9 +18,8 @@ import PossibleAnswerView from "../../components/PossibleAnswerView";
 import Error from "../../components/Error";
 import {
   CONFIRM_ACTION,
-  ERROR_MSG,
   LINKS, PASSAGE_OPTION_FROM_GIVEN,
-  PASSAGE_TEXT, PASSAGE_TYPES,
+  PASSAGE_TYPES,
   QUES_ACTION,
   QUESTION_TEXT_TYPES,
   VELOCITY
@@ -137,8 +136,8 @@ class QuestionViewPage extends React.Component {
                                 onDoAction={this.onDoAction}/>);
   }
   goHome = () => {
-    const {id, catId, childCatId} = this.props.match.params;
-    this.props.goHome({catId, childCatId});
+    const {id, catId} = this.props.match.params;
+    this.props.goHome({catId});
   }
 
   add2ExamBulk = (quesList) => {

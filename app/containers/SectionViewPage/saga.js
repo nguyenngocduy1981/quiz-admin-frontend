@@ -22,14 +22,14 @@ import {del, post} from '../../utils/request-method';
 import notify from '../../utils/notify';
 
 import {getExam} from '../../utils/local-storage';
-import {ADMIN_HOME, SECTION_R} from '../../constants/routers';
+import {HOME, SECTION_R} from '../../constants/routers';
 import FileSaver from 'file-saver';
 
 
 const _ = require('lodash');
 
 export function* goHome() {
-  yield put(push(ADMIN_HOME));
+  yield put(push(HOME));
 }
 
 
@@ -70,14 +70,11 @@ export function* fetchCategories(pl) {
     yield put(loadCategoriesSuccess(data));
 
     if (pl.payload) {
-      const {parentId, childId} = pl.payload;
+      const {parentId} = pl.payload;
 
       if (parentId) {
         const {children} = data.find(c => c.id === parseInt(parentId, 0));
         yield put(loadChildCategoriesSuccess(children));
-      }
-      if (childId) {
-        yield put(loadSections(pl.payload));
       }
     }
   } catch (err) {

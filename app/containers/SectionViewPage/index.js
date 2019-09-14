@@ -40,6 +40,7 @@ import {countQuesInExam} from '../../utils/local-storage';
 import {defaultCatId} from '../SectionAddPage/constants';
 import NoData from '../../components/NoData';
 import SubCategoriesView from '../../components/SubCategoriesView';
+import {NO_REQUIRE_RELOAD} from "../../constants/constants";
 
 const _ = require('lodash');
 const $ = require('jquery');
@@ -61,9 +62,20 @@ class SectionViewPage extends React.Component {
 
     $(`#${ACTIONS_ID}`).hide();
 
-    const {catId} = this.props.match.params;
-    const payload = {parentId: catId};
-    this.props.loadCategories(payload);
+    const {categories} = this.props;
+
+    const {catId, reloadFlag} = this.props.match.params;
+
+    console.log('catId, reloadFlag: ', catId, reloadFlag, categories)
+
+    if (reloadFlag !== NO_REQUIRE_RELOAD) {
+      this.props.resetSections(catId);
+    }
+
+    if (!categories) {
+      const payload = {parentId: catId};
+      this.props.loadCategories(payload);
+    }
 
     this.props.loadExamFromLocalStorage();
   }
@@ -111,14 +123,14 @@ class SectionViewPage extends React.Component {
           {/* </Link>*/}
           <Link
             className="router-link m-r-5"
-            to={`${QUESTIONS_VIEW}/${sec.id}/${catId}/${childCatId}`}
+            to={`${QUESTIONS_VIEW}/${sec.id}/${catId}`}
             title={LINKS.chi_tiet_q}
           >
             <i className="fa fa-bars" aria-hidden="true"></i>
           </Link>
           <Link
             className="router-link m-l-5"
-            to={`${QUESTIONS_NEW}/${sec.id}/${catId}/${childCatId}`}
+            to={`${QUESTIONS_NEW}/${sec.id}/${catId}`}
             title={LINKS.them_q}
           >
             <i className="fa fa-question-circle" aria-hidden="true"></i>
@@ -139,6 +151,7 @@ class SectionViewPage extends React.Component {
     const payload = {parentId: id};
     const {catId} = this.props.match.params;
     if (catId !== `${id}`) {
+      this.props.resetSections(catId);
       this.props.loadChildCategories(payload);
     }
   }
@@ -196,10 +209,11 @@ class SectionViewPage extends React.Component {
 
   onChildCategoryChange = (id) => {
     const {catId} = this.props.match.params;
-    const {selectedChildCat} = this.props;
-    if (selectedChildCat !== id) {
+    // const {selectedChildCat} = this.props;
+    // console.log('selectedChildCat: ', selectedChildCat)
+    // if (selectedChildCat !== id) {
       this.loadSections(catId, id);
-    }
+    // }
   }
 
   renderSections = () => {

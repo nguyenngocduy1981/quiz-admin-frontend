@@ -14,19 +14,19 @@ import request from '../../utils/request';
 import {post} from '../../utils/request-method';
 import {SECTION_R} from "../../constants/routers";
 import {
-  PASSAGE_TEXT,
   PASSAGE_OPTION_FROM_GIVEN,
   QUESTION_TEXT_TYPES,
   QUESTION_OPTION_TYPES
 } from "../../constants/questions";
 import notify from "../../utils/notify";
+import {NO_REQUIRE_RELOAD} from "../../constants/constants";
 
 const _ = require('lodash');
 
 export function* goHome(payload) {
   const {catId} = payload;
   if (catId) {
-    yield put(push(`${SECTION_R}/${catId}`));
+    yield put(push(`${SECTION_R}/${catId}/${NO_REQUIRE_RELOAD}`));
   } else {
     yield put(push(SECTION_R));
   }

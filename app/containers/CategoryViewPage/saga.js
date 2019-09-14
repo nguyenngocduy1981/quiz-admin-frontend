@@ -13,14 +13,14 @@ import {
 import {
   CATEGORIES,
 } from '../../constants/service-model';
-import {ADMIN_HOME, CATEGORY} from "../../constants/routers";
+import {HOME, CATEGORY} from "../../constants/routers";
 import {post} from "../../utils/request-method";
 import notify from "../../utils/notify";
 
 const _ = require('lodash');
 
 export function* goHome() {
-  yield put(push(ADMIN_HOME));
+  yield put(push(HOME));
 }
 
 export function* fetchCategories(pl) {

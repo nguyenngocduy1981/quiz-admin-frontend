@@ -83,7 +83,7 @@ class CategoryViewPage extends React.Component {
       <li
         className={'list-group-item'}
         key={idx}>
-        <Link className="m-l-10 router-link" to={`${SECTION_R}/${id}/${cat.id}`}>
+        <Link className="m-l-10 router-link" to={`${SECTION_R}/${id}`}>
           {cat.catName}
         </Link>
       </li>

@@ -13,13 +13,14 @@ import {DEL_QUESTIONS, SECTION_QUESTIONS} from '../../constants/service-model';
 import request from '../../utils/request';
 import {SECTION_R} from "../../constants/routers";
 import notify from "../../utils/notify";
+import {NO_REQUIRE_RELOAD} from "../../constants/constants";
 
 const _ = require('lodash');
 
 export function* goHome(pl) {
-  const {catId, childCatId} = pl.payload;
+  const {catId} = pl.payload;
   if (catId) {
-    yield put(push(`${SECTION_R}/${catId}/${childCatId}`));
+    yield put(push(`${SECTION_R}/${catId}/${NO_REQUIRE_RELOAD}`));
   } else {
     yield put(push(SECTION_R));
   }

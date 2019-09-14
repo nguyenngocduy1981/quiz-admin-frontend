@@ -15,11 +15,6 @@ import examsReportReducer from 'containers/ExamReportViewPage/reducer';
 import examResultReducer from 'containers/ExamResultViewPage/reducer';
 import examsResultReducer from 'containers/ExamResultListViewPage/reducer';
 import categoryViewReducer from 'containers/CategoryViewPage/reducer';
-import loginResultReducer from 'containers/LoginPage/reducer';
-
-import examReducer_Examiner from 'containers/examiner/ExamPage/reducer';
-import examResultReducer_Examiner from 'containers/examiner/ExamResultViewPage/reducer';
-import homeReducer_Examiner from 'containers/examiner/HomePage/reducer';
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
@@ -35,11 +30,7 @@ export default function createReducer(injectedReducers = {}) {
     examsReport: examsReportReducer,
     examsResult: examsResultReducer,
     examResult: examResultReducer,
-    loginResult: loginResultReducer,
 
-    exam_Examiner: examReducer_Examiner,
-    examResult_Examiner: examResultReducer_Examiner,
-    examList_Examiner: homeReducer_Examiner,
     router: connectRouter(history),
     ...injectedReducers,
   });

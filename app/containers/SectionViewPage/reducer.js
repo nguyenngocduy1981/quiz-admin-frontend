@@ -36,7 +36,8 @@ function sectionViewReducer(state = initialState, action) {
       return {...state, toggleChildCategories};
     }
     case RESET_SECTIONS: {
-      return {...state, sections: false, selectedCat: false};
+      // return {...state, sections: false, selectedCat: false};
+      return {...state, sections: false, selectedCat: action.catId};
     }
     case LOAD_EXAM_FROM_LOCAL_STORAGE: {
       return {...state, exam: getExam()};
@@ -50,7 +51,6 @@ function sectionViewReducer(state = initialState, action) {
         ...state,
         categories: false,
         childCategories: false,
-        sections: false,
         selectedCat: action.payload.parentId,
         selectedChildCat: false,
         loading: true
@@ -64,7 +64,6 @@ function sectionViewReducer(state = initialState, action) {
       const newState = {
         ...state,
         childCategories: children,
-        sections: false,
         selectedChildCat: false,
         selectedCat: action.payload.parentId
       };
